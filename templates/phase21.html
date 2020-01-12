@@ -1,0 +1,45 @@
+<!--集める：親が正解を入力する-->
+<!--出題->○集める->一覧表示->投票->回答者open->閲覧-->
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Sample</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="js/bootstrap.min.js"></script>
+    <title>フィクショナリー</title>
+    <link rel="stylesheet" href="style.css" >
+    <style type="text/css">
+      @import url("/templates/style.css");
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+</head>
+<body>
+	<header class="header">
+		<h1>フィクショナリーくま！</h1>
+	</header>
+	<div class="contents">
+        
+	   <h2>お題は{{.odai}}です。</h2>
+        <p>あなたの知っている意味を書いてください。</p>
+	   <p>
+           <p>回答者の名前</p>
+            <form method="post" action="/new">
+            <input type="text" name="word"><br>
+            </form>
+        
+        <p>{{.challenge}} の意味は？</p>
+            <form method="post" action="/">
+            <input type="text" name=""><br>
+            <input type="submit" value="提出！">            </form>
+        </p>
+	</div>
+</body>
+</html>

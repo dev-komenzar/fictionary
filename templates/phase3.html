@@ -1,0 +1,66 @@
+<!--回答一覧-->
+<!--出題->集める->○一覧表示->投票->回答者open->閲覧-->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap Sample</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="js/bootstrap.min.js"></script>
+    <title>フィクショナリー</title>
+    <link rel="stylesheet" href="style.css" >
+    <style type="text/css">
+      @import url("/templates/style.css");
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">
+</head>
+<body>
+	<header class="header">
+		<h1>フィクショナリーくま！</h1>
+	</header>
+	<div class="contents">
+        
+        <h2> {{.odai}} </h2>
+        <div> 回答数：{{.countOfUser}} </div>
+        <div>
+            <button type="button" class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">全て展開</button>
+        </div>
+        
+        {{range }}
+            <li>
+                <p>
+                    <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">第1要素の切替</a>
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">第2要素の切替</button>
+                    <button type="button" class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">両方の要素を切替</button>
+                </p>
+                <div class="row">
+                  <div class="col">
+                    <div class="collapse multi-collapse" id="multiCollapseExample1">
+                      <div class="card card-body">
+                        {{ .author }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col">
+                    <div class="collapse multi-collapse" id="multiCollapseExample2">
+                      <div class="card card-body">
+                        {{ .description }}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <br>
+                <input type="text" name="address" size="50">
+            </li>
+        {{ end }}
+        
+	   
+	</div>
+</body>
+</html>
