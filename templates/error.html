@@ -1,5 +1,4 @@
-<!--出題：親が出題するページ-->
-<!--○出題->集める->一覧表示->投票->回答者open->閲覧-->
+<!--共通のエラーページ：エラーが発生するところでこのページを表示-->
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -26,8 +25,8 @@
 	</header>
 	<div class="contents">
         
-	   <h2>お題は{{.odai}}です。</h2>
-        <p>広辞苑に載っている意味を書いてください。</p>
+	   <h2>エラー</h2>
+        <p> {{.message}} </p>
 	   <p>
             <form method="post" action="/new">
             <input type="text" name="word"><br>
