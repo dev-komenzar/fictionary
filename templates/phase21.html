@@ -29,17 +29,17 @@
         
 	   <h2>お題は{{.odai}}です。</h2>
         <p>あなたの知っている意味を書いてください。</p>
-	   <p>
-           <p>回答者の名前</p>
-            <form method="post" action="/new">
-            <input type="text" name="word"><br>
+	   <div>
+           <div>回答者の名前</div>
+            <form method="post" action={{.uri}} >
+            <input type="text" name="name"><br>
             </form>
         
-        <p>{{.challenge}} の意味は？</p>
-            <form method="post" action="/">
-            <input type="text" name=""><br>
+        	<div>{{.odai}} の意味は？</div>
+            <form method="post" action={{.uri}} >
+            <input type="text" name="answer"><br>
             <input type="submit" value="提出！">            </form>
-        </p>
+        </div>
 	</div>
 </body>
 </html>
