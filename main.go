@@ -130,7 +130,7 @@ func main() {
 		}
 
 		odai := dbGetOne(id)
-		uri := "/games/" + id + "/new"
+		uri := "/games/" + n + "/new"
 		c.HTML(200, "phase21.html", gin.H{"odai": odai, "uri": uri})
 	})
 
@@ -149,6 +149,16 @@ func main() {
 		kaitou := makeAns(name, ans, iduint)
 		dbInsert(kaitou, c)
 
+		uri := "/games/" + n + "/accepted"
 		c.Redirect(302, uri)
+	})
+
+	//「回答受け付けました」ページ
+	router.GET("/games/:id/accepted", func(c *gin.Context) {
+		//idをint型に変換
+		n := c.Param("id")
+
+		uri := "/games/" + n
+		c.HTML(200, "phase22.html", gin.H{"uri": uri})
 	})
 }
