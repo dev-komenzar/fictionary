@@ -26,13 +26,13 @@
 	</header>
 	<div class="contents">
         
-        <h2> {{.odai}} </h2>
-        <div> 回答数：{{.countOfUser}} </div>
+        <h2>「{{.odai}}」</h2>
+        <div>回答数：{{.countOfUsers}}</div>
         <div>
             <button type="button" class="btn btn-primary" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">全て展開</button>
         </div>
         
-        {{range }}
+        {{range kaitous}}
             <li>
                 <p>
                     <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">第1要素の切替</a>
@@ -43,20 +43,20 @@
                   <div class="col">
                     <div class="collapse multi-collapse" id="multiCollapseExample1">
                       <div class="card card-body">
-                        {{ .author }}
+                        {{ .User }}
                       </div>
                     </div>
                   </div>
                   <div class="col">
                     <div class="collapse multi-collapse" id="multiCollapseExample2">
                       <div class="card card-body">
-                        {{ .description }}
+                        {{ .Answer }}
                       </div>
                     </div>
                   </div>
                 </div>
                 <br>
-                <input type="text" name="address" size="50">
+                <input type="text" name="note" size="50">
             </li>
         {{ end }}
         
