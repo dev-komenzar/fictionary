@@ -85,7 +85,6 @@ func gameInit(text string) data.Game {
 
 func dbGetGames() []data.Game {
 	var games []data.Game
-	var history []string
 
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
