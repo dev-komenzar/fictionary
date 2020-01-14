@@ -13,9 +13,11 @@ import (
 	"github.com/tuckKome/fictionary/data"
 )
 
+const connect string = "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password"
+
 //DB初期化
 func dbInit() {
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password")
+	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInit)")
 	}
@@ -25,7 +27,7 @@ func dbInit() {
 
 //DBに追加
 func dbInsert(new interface{}, c *gin.Context) {
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password")
+	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
 	}
@@ -46,7 +48,7 @@ func dbInsert(new interface{}, c *gin.Context) {
 
 //DBから一つ取り出す：回答ページで使用
 func dbGetOne(id int) data.Game {
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password")
+	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
 	}
@@ -55,6 +57,19 @@ func dbGetOne(id int) data.Game {
 	var game data.Game
 	db.First(&game, id)
 	return game
+}
+
+//DBから[]Kaitouを取り出す
+func dbGetKaitou(id int) []data.Kaitou {
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	var kaitous []data.Kaitou
+	db.Where("GameID = ?", id).Find(kaitous)
+	return kaitous
 }
 
 //Gameの初期設定
@@ -68,22 +83,18 @@ func gameInit(text string) data.Game {
 	return newGame
 }
 
-func makeHistory() []string {
+func dbGetGames() []data.Game {
 	var games []data.Game
 	var history []string
 
-	db, err := gorm.Open("postgres", "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password")
+	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
 	}
 	defer db.Close()
 
 	db.Find(&games)
-	for i := range games {
-		var odai = games[i].Odai
-		history = append(history, odai)
-	}
-	return history
+	return games
 }
 
 func makeAns(name string, ans string, id uint) data.Kaitou {
@@ -107,7 +118,7 @@ func main() {
 
 	//はじめのページ：お題を入力：過去のお題
 	router.GET("/", func(c *gin.Context) {
-		var h = makeHistory()
+		var h = dbGetGames()
 		c.HTML(200, "index.html", gin.H{"History": h})
 	})
 
@@ -117,11 +128,11 @@ func main() {
 		dbInsert(newGame, c) //DB：ゲームに登録
 
 		id := strconv.Itoa(int(newGame.ID))
-		uri := "/games/" + id + "/kaitou"
+		uri := "/games/" + id + "/new"
 		c.Redirect(302, uri)
 	})
 
-	router.GET("/games/:id/kaitou", func(c *gin.Context) {
+	router.GET("/games/:id/new", func(c *gin.Context) {
 		//idをint型に変換
 		n := c.Param("id")
 		id, err := strconv.Atoi(n)
@@ -129,9 +140,9 @@ func main() {
 			panic(err)
 		}
 
-		odai := dbGetOne(id)
+		game := dbGetOne(id)
 		uri := "/games/" + n + "/new"
-		c.HTML(200, "phase21.html", gin.H{"odai": odai, "uri": uri})
+		c.HTML(200, "phase21.html", gin.H{"odai": game.Odai, "uri": uri})
 	})
 
 	router.POST("/games/:id/new", func(c *gin.Context) {
@@ -153,12 +164,32 @@ func main() {
 		c.Redirect(302, uri)
 	})
 
-	//「回答受け付けました」ページ
+	//「回答受け付けました」ページを表示
 	router.GET("/games/:id/accepted", func(c *gin.Context) {
-		//idをint型に変換
+		//idを取得
 		n := c.Param("id")
 
 		uri := "/games/" + n
 		c.HTML(200, "phase22.html", gin.H{"uri": uri})
+	})
+
+	//「みんなの回答」ページを表示
+	router.GET("/games/:id", func(c *gin.Context) {
+		var kaitous []data.Kaitou
+		var numKaitou int
+
+		n := c.Param("id")
+		id, err := strconv.Atoi(n)
+		if err != nil {
+			panic(err)
+		}
+		game := dbGetOne(id)
+		answers := dbGetKaitou(id)
+		numKaitou = len(kaitous)
+		c.HTML(200, "phase3.html", gin.H{
+			"odai":         game.Odai,
+			"countOfUsers": numKaitou,
+			"kaitous":      answers,
+		})
 	})
 }

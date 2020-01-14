@@ -27,7 +27,7 @@
 	</header>
 	<div class="contents">
         
-	   <h2>お題は{{.odai}}です。</h2>
+	   <h2>お題は「{{.odai}}」です。</h2>
         <p>あなたの知っている意味を書いてください。</p>
 	   <div>
            <div>回答者の名前</div>
@@ -35,7 +35,7 @@
             <input type="text" name="name"><br>
             </form>
         
-        	<div>{{.odai}} の意味は？</div>
+        	<div>「{{.odai}}」の意味は？</div>
             <form method="post" action={{.uri}} >
             <input type="text" name="answer"><br>
             <input type="submit" value="提出！">            </form>
