@@ -37,7 +37,7 @@
     <div>
     <h2>これまでのお題</h2>
         {{ range .History}}
-        {{ . }} <br>
+        <a href="/games/{{.ID}}">「{{.Odai}}」</a><br>
         {{ end }}
     </div>
 </body>
