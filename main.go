@@ -13,13 +13,13 @@ import (
 	"github.com/tuckKome/fictionary/data"
 )
 
-const connect string = "host=localhost port=5432 user=tahoiya dbname=tahoiya password=password"
+const connect string = "host=127.0.0.1 port=5432 user=tahoiya dbname=dbtahoiya password=password sslmode=disable"
 
 //DB初期化
 func dbInit() {
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInit)")
+		panic(err)
 	}
 	db.AutoMigrate(&data.Kaitou{}, &data.Game{})
 	defer db.Close()
@@ -33,12 +33,12 @@ func dbInsert(new interface{}, c *gin.Context) {
 	}
 	defer db.Close()
 
-	if db.NewRecord(&new) == false {
+	if db.NewRecord(new) == false {
 		panic("すでにデータが存在します。")
 	} else {
 		db.Create(&new)
-		if db.NewRecord(&new) == false {
-			log.Printf("History Recorded\n")
+		if db.NewRecord(new) == false {
+			log.Println("History Recorded")
 		} else {
 			log.Println("History not created") //エラー内容を表示したい http://gorm.io/ja_JP/docs/error_handling.html
 			c.HTML(200, "error.html", gin.H{"message": "問題が作成されませんでした。もう一度試してください"})
@@ -191,4 +191,7 @@ func main() {
 			"kaitous":      answers,
 		})
 	})
+
+	//起動
+	router.Run()
 }
