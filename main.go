@@ -90,6 +90,8 @@ func main() {
 
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*.html")
+	router.StaticFile("/css/bootstrap.min.css", "./css/bootstrap.min.css")
+	router.StaticFile("/js/bootstrap.min.js", "./js/bootstrap.min.js")
 
 	dbInit()
 
