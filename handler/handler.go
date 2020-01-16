@@ -109,7 +109,8 @@ func GetAccepted(c *gin.Context) {
 	n := c.Param("id")
 
 	uri := "/games/" + n
-	c.HTML(200, "phase22.html", gin.H{"uri": uri})
+	uri2 := "/games/" + n + "/new"
+	c.HTML(200, "phase22.html", gin.H{"uri": uri, "uri2": uri2})
 }
 
 //GetList は回答一覧を取得
