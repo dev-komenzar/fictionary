@@ -1,1 +1,1 @@
-web: fictionary800
+web: bin/fictionary800
