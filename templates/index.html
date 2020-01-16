@@ -1,38 +1,43 @@
 <!--○出題->集める->一覧表示->投票->回答者open->閲覧-->
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>フィクショナリー</title>
-    <!-- BootstrapのCSS読み込み -->
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <!-- jQuery読み込み -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <!-- BootstrapのJS読み込み -->
-    <script src="/js/bootstrap.min.js"></script>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>フィクショナリー</title>
+	<!-- BootstrapのCSS読み込み -->
+	<link href="/css/bootstrap.min.css" rel="stylesheet">
+	<!-- jQuery読み込み -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<!-- BootstrapのJS読み込み -->
+	<script src="/js/bootstrap.min.js"></script>
 </head>
+
 <body>
-	<header class="header">
-		<h1><a href="/">たほいや！</a></h1>
-	</header>
-	<div class="contents">
-        
-        <h2>お題は？</h2>
-        <div>
-            <form method="post" action="/newGame">
-            <input type="text" name="odai"><br>
-            <input type="submit" value="提出！">
-            </form>
-        </div>
-        
+	<div class="container">
+		<header class="header">
+			<h1><a href="/">たほいや！</a></h1>
+		</header>
+		<div class="contents">
+
+			<h2>お題は？</h2>
+			<div>
+				<form method="post" action="/newGame">
+					<input type="text" name="odai"><br>
+					<input type="submit" value="提出！">
+				</form>
+			</div>
+
+		</div>
+		<div>
+			<h2>これまでのお題</h2>
+			{{ range .History}}
+			<a href="/games/{{.ID}}">「{{.Odai}}」</a><br>
+			{{ end }}
+		</div>
 	</div>
-    <div>
-    <h2>これまでのお題</h2>
-        {{ range .History}}
-        <a href="/games/{{.ID}}">「{{.Odai}}」</a><br>
-        {{ end }}
-    </div>
 </body>
+
 </html>
