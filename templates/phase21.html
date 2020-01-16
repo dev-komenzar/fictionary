@@ -27,7 +27,7 @@
 			<h2>お題は「{{.odai}}」です。</h2>
 			<p>あなたの知っている意味を書いてください。</p>
 			<div>
-				<div class="container">
+				<div>
 					<div>回答者の名前</div>
 					<form method="post" action={{.uri}}>
 						<input type="text" name="name"><br>
@@ -36,6 +36,7 @@
 						<input type="text" name="answer"><br>
 						<input type="submit" value="提出！">
 					</form>
+					<div>回答に招待するには、このページのURLを送ってあげてください。</div>
 				</div>
 			</div>
 		</div>
