@@ -16,7 +16,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-//Openの引数を作る
+//ArgInt はOpenの引数を作る
 func ArgInit() string {
 	host := getEnv("FICTIONARY_DATABASE_HOST", "127.0.0.1")
 	port := getEnv("FICTIONARY_PORT", "5432")
@@ -35,7 +35,7 @@ func ArgInit() string {
 }
 
 //DB初期化
-func DBInit() {
+func Init() {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -46,7 +46,7 @@ func DBInit() {
 }
 
 //DBから一つ取り出す：回答ページで使用
-func DBGetOne(id int) data.Game {
+func GetOne(id int) data.Game {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -60,7 +60,7 @@ func DBGetOne(id int) data.Game {
 }
 
 //DBから[]Kaitouを取り出す
-func DBGetKaitou(id int) []data.Kaitou {
+func GetKaitou(id int) []data.Kaitou {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -73,7 +73,7 @@ func DBGetKaitou(id int) []data.Kaitou {
 	return kaitous
 }
 
-func DBGetGames() []data.Game {
+func GetGames() []data.Game {
 	var games []data.Game
 
 	connect := ArgInit()
@@ -87,7 +87,7 @@ func DBGetGames() []data.Game {
 	return games
 }
 
-func DBInsert(kaitou data.Kaitou) {
+func Insert(kaitou data.Kaitou) {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
