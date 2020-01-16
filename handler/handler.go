@@ -42,11 +42,13 @@ func shuffle(a []data.Kaitou) {
 	}
 }
 
+//Index ははじめのページを取得
 func Index(c *gin.Context) {
-	var h = db.DBGetGames()
+	var h = db.GetGames()
 	c.HTML(200, "index.html", gin.H{"History": h})
 }
 
+//CreateGame は新しいゲームを作る
 func CreateGame(c *gin.Context) {
 	text := c.PostForm("odai")
 	game := gameInit(text)
@@ -66,6 +68,7 @@ func CreateGame(c *gin.Context) {
 	c.Redirect(302, uri)
 }
 
+//GetKaitou は回答フォームを取得する
 func GetKaitou(c *gin.Context) {
 	//idをint型に変換
 	n := c.Param("id")
@@ -74,11 +77,12 @@ func GetKaitou(c *gin.Context) {
 		panic(err)
 	}
 
-	game := db.DBGetOne(id)
+	game := db.GetOne(id)
 	uri := "/games/" + n + "/new"
 	c.HTML(200, "phase21.html", gin.H{"odai": game.Odai, "uri": uri})
 }
 
+//CreateKaitou は回答を作る
 func CreateKaitou(c *gin.Context) {
 	//idをuint型に変換
 	n := c.Param("id")
@@ -93,12 +97,13 @@ func CreateKaitou(c *gin.Context) {
 
 	kaitou := makeAns(name, ans, iduint)
 	//INSERT
-	db.DBInsert(kaitou)
+	db.Insert(kaitou)
 
 	uri := "/games/" + n + "/accepted"
 	c.Redirect(302, uri)
 }
 
+//GetAccepted はAcceptedページを取得
 func GetAccepted(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
@@ -107,6 +112,7 @@ func GetAccepted(c *gin.Context) {
 	c.HTML(200, "phase22.html", gin.H{"uri": uri})
 }
 
+//GetList は回答一覧を取得
 func GetList(c *gin.Context) {
 	var numKaitou int
 
@@ -115,8 +121,8 @@ func GetList(c *gin.Context) {
 	if err != nil {
 		panic(err)
 	}
-	game := db.DBGetOne(id)
-	answers := db.DBGetKaitou(id)
+	game := db.GetOne(id)
+	answers := db.GetKaitou(id)
 	shuffle(answers)
 	numKaitou = len(answers)
 	c.HTML(200, "phase3.html", gin.H{
