@@ -15,7 +15,7 @@ func main() {
 	router.StaticFile("/css/bootstrap.min.css", "./css/bootstrap.min.css")
 	router.StaticFile("/js/bootstrap.min.js", "./js/bootstrap.min.js")
 
-	db.DBInit()
+	db.Init()
 
 	//はじめのページ：お題を入力：過去のお題
 	router.GET("/", handler.Index)
