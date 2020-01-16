@@ -12,7 +12,14 @@ import (
 	"github.com/tuckKome/fictionary/data"
 )
 
-const connect string = "host=127.0.0.1 port=5432 user=tahoiya dbname=dbtahoiya password=password sslmode=disable"
+const (
+	connect string = "host=" + host + "port=" + port + "user=" + user "dbname=" + dbname + "password=" + password + "sslmode=disable"
+	host string = "127.0.0.1"
+	port string = "5432"
+	user string = "tahoiya"
+	dbname string = "dbtahoiya"
+	password string = "password"
+)
 
 //DB初期化
 func dbInit() {
