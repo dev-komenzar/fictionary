@@ -33,7 +33,7 @@
 						<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample1{{$i}}" aria-expanded="false" aria-controls="multiCollapseExample1{{$i}}">回答者</button>
 						<button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2{{$i}}" aria-expanded="false" aria-controls="multiCollapseExample2{{$i}}">答え</button>
 				</div>
-				<div class="row">
+				<div class="row mb-3">
 					<div class="col-xs-3 col-md-2">
 						<div class="collapse multi-collapse" id="multiCollapseExample1{{$i}}">
 							<div class="card card-body">
@@ -41,19 +41,14 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-xs-9 col-md-10">
+					<div class="col-xs-5 col-md-6">
 						<div class="collapse multi-collapse col-xs-10" id="multiCollapseExample2{{$i}}">
 							<div class="card card-body">
 								{{ .Answer }}
 							</div>
 						</div>
 					</div>
-				</div>
-				<div class="row mb-3">
-					<div class="col-xs-3 col-md-2">
-					<a></a>
-					</div>
-					<div class="col-xs-9 col-md-10">
+					<div class="col-xs-4 col-md-4">
 						<div class="input-group">
 							<div class="input-group-prepend">
 								<span class="input-group-text">投票</span>
@@ -62,6 +57,7 @@
 						</div>
 					</div>
 				</div>
+				
 			{{ end }}
 	</div>
 </body>
