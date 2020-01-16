@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -13,11 +14,11 @@ import (
 )
 
 const (
-	connect string = "host=" + host + "port=" + port + "user=" + user "dbname=" + dbname + "password=" + password + "sslmode=disable"
-	host string = "127.0.0.1"
-	port string = "5432"
-	user string = "tahoiya"
-	dbname string = "dbtahoiya"
+	connect  string = "host=" + host + " port=" + port + " user=" + user + " dbname=" + dbname + " password=" + password + " sslmode=disable"
+	host     string = "127.0.0.1"
+	port     string = "5432"
+	user     string = "tahoiya"
+	dbname   string = "dbtahoiya"
 	password string = "password"
 )
 
@@ -91,6 +92,14 @@ func makeAns(name string, ans string, id uint) data.Kaitou {
 	kaitou.UpdatedAt = now
 
 	return kaitou
+}
+
+func shuffle(a []data.Kaitou) {
+	rand.Seed(time.Now().UnixNano())
+	for i := range a {
+		j := rand.Intn(i + 1)
+		a[i], a[j] = a[j], a[i]
+	}
 }
 
 func main() {
@@ -185,6 +194,7 @@ func main() {
 		}
 		game := dbGetOne(id)
 		answers := dbGetKaitou(id)
+		shuffle(answers)
 		numKaitou = len(answers)
 		c.HTML(200, "phase3.html", gin.H{
 			"odai":         game.Odai,
