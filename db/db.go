@@ -23,13 +23,15 @@ func ArgInit() string {
 	user := getEnv("FICTIONARY_USER", "tahoiya")
 	dbname := getEnv("FICTIONARY_DB_NAME", "dbtahoiya")
 	password := getEnv("FICTIONARY_DB_PASS", "password")
+	sslmode := getEnv("FICTIONARY_SSLMODE", "disable")
 
-	dbinfo := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=require",
+	dbinfo := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=%s",
 		user,
 		password,
 		host,
 		port,
 		dbname,
+		sslmode,
 	)
 	return dbinfo
 }
