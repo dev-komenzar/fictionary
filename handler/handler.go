@@ -2,14 +2,12 @@ package handler
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresql を使うためのライブラリ
 	"github.com/line/line-bot-sdk-go/linebot"
 
@@ -83,6 +81,7 @@ func Index(c *gin.Context) {
 	c.HTML(200, "index.html", gin.H{"History": h})
 }
 
+/*
 //CreateGame は新しいゲームを作る
 func CreateGame(c *gin.Context) {
 	text := c.PostForm("odai")
@@ -102,26 +101,12 @@ func CreateGame(c *gin.Context) {
 	id := strconv.Itoa(int(game.ID))
 	uri := "/games/" + id + "/new"
 
-	//実験
-	var bot *linebot.Client
-
 	if getEnv("GIN_MODE", "debug") == "release" {
 		if lineUse == "on" {
 			var lines []data.Line
 			db.Find(&lines)
 
 			lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
-
-			/*
-				channelID := getEnv("CHANNEL_ID", "")
-				channelSecret := getEnv("CHANNEL_SECRET", "")
-
-
-					bot, err := linebot.New(channelSecret, channelID)
-					if err != nil {
-						log.Fatal(err)
-					}
-			*/
 			for i := range lines {
 				to := lines[i].TalkID
 				if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
@@ -132,6 +117,7 @@ func CreateGame(c *gin.Context) {
 	}
 	c.Redirect(302, uri)
 }
+*/
 
 //GetKaitou は回答フォームを取得する
 func GetKaitou(c *gin.Context) {
@@ -198,14 +184,17 @@ func GetList(c *gin.Context) {
 	})
 }
 
-func CreateGroup(c *gin.Context) {
-	var bot *linebot.Client
-
-	events, err := bot.ParseRequest(c.Request)
-	if err != nil {
-		log.Fatal(err)
+func getNotNill(a string, b string, c string) string {
+	if a != "" {
+		return a
+	} else if b != "" {
+		return b
+	} else {
+		return c
 	}
-	fmt.Println(events) //jsonを確認したい
+}
+
+func MakeNewLine(events []*Event) {
 	for _, event := range events {
 		if event.Type == linebot.EventTypeJoin {
 			userID := event.Source.UserID
@@ -224,15 +213,5 @@ func CreateGroup(c *gin.Context) {
 			db.InsertLine(line) //DBにLINEからの情報が登録された
 
 		}
-	}
-}
-
-func getNotNill(a string, b string, c string) string {
-	if a != "" {
-		return a
-	} else if b != "" {
-		return b
-	} else {
-		return c
 	}
 }

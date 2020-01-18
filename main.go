@@ -1,8 +1,15 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"fmt"
+	"log"
+	"strconv"
 
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	"github.com/line/line-bot-sdk-go/linebot"
+
+	"github.com/tuckKome/fictionary/data"
 	"github.com/tuckKome/fictionary/db"
 	"github.com/tuckKome/fictionary/handler"
 )
@@ -16,12 +23,45 @@ func main() {
 
 	db.Init()
 
-	handler.LineConnect()
+	bot := handler.LineConnect()
 
 	//はじめのページ：お題を入力：過去のお題
 	router.GET("/", handler.Index)
 
-	router.POST("/newGame", handler.CreateGame)
+	router.POST("/newGame", func(c *gin.Context) {
+		text := c.PostForm("odai")
+		lineUse := c.PostForm("checkLine")
+		fmt.Println(lineUse)
+		game := gameInit(text)
+
+		connect := db.ArgInit()
+		db, err := gorm.Open("postgres", connect)
+		if err != nil {
+			panic("データベース開ず(CreateGame)")
+		}
+		defer db.Close()
+
+		db.Create(&game)
+
+		id := strconv.Itoa(int(game.ID))
+		uri := "/games/" + id + "/new"
+
+		if getEnv("GIN_MODE", "debug") == "release" {
+			if lineUse == "on" {
+				var lines []data.Line
+				db.Find(&lines)
+
+				lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
+				for i := range lines {
+					to := lines[i].TalkID
+					if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
+						log.Fatal(err)
+					}
+				}
+			}
+		}
+		c.Redirect(302, uri)
+	})
 
 	router.GET("/games/:id/new", handler.GetKaitou)
 
@@ -34,7 +74,14 @@ func main() {
 	router.GET("/games/:id", handler.GetList)
 
 	//LINE bot からのwebhookを受ける
-	router.POST("/line", handler.CreateGroup)
+	router.POST("/line", func(c *gin.Context) {
+		events, err := bot.ParseRequest(c.Request)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(events) //jsonを確認したい
+		handler.MakeNewLine(events)
+	})
 
 	//起動
 	router.Run()
