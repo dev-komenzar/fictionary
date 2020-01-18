@@ -16,6 +16,8 @@ func main() {
 
 	db.Init()
 
+	handler.LineConnect()
+
 	//はじめのページ：お題を入力：過去のお題
 	router.GET("/", handler.Index)
 

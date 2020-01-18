@@ -44,6 +44,19 @@ func lineInit(id string, typeOfSource string) data.Line {
 	return newLine
 }
 
+//LineConnect : LINE bot 接続
+func LineConnect() *linebot.Client {
+	channelID := getEnv("CHANNEL_ID", "")
+	channelSecret := getEnv("CHANNEL_SECRET", "")
+
+	bot, err := linebot.New(channelSecret, channelID)
+	if err != nil {
+		fmt.Println(err)
+		return nil
+	}
+	return bot
+}
+
 func makeAns(name string, ans string, id uint) data.Kaitou {
 	var kaitou data.Kaitou
 	kaitou.User = name
@@ -89,6 +102,9 @@ func CreateGame(c *gin.Context) {
 	id := strconv.Itoa(int(game.ID))
 	uri := "/games/" + id + "/new"
 
+	//実験
+	var bot *linebot.Client
+
 	if getEnv("GIN_MODE", "debug") == "release" {
 		if lineUse == "on" {
 			var lines []data.Line
@@ -96,13 +112,16 @@ func CreateGame(c *gin.Context) {
 
 			lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
 
-			channelID := getEnv("CHANNEL_ID", "")
-			channelSecret := getEnv("CHANNEL_SECRET", "")
+			/*
+				channelID := getEnv("CHANNEL_ID", "")
+				channelSecret := getEnv("CHANNEL_SECRET", "")
 
-			bot, err := linebot.New(channelID, channelSecret)
-			if err != nil {
-				log.Fatal(err)
-			}
+
+					bot, err := linebot.New(channelSecret, channelID)
+					if err != nil {
+						log.Fatal(err)
+					}
+			*/
 			for i := range lines {
 				to := lines[i].TalkID
 				if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
@@ -180,15 +199,12 @@ func GetList(c *gin.Context) {
 }
 
 func CreateGroup(c *gin.Context) {
-	channelID := getEnv("CHANNEL_ID", "")
-	channelSecret := getEnv("CHANNEL_SECRET", "")
+	var bot *linebot.Client
 
-	bot, err := linebot.New(channelSecret, channelID)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
 	events, err := bot.ParseRequest(c.Request)
+	if err != nil {
+		log.Fatal(err)
+	}
 	fmt.Println(events) //jsonを確認したい
 	for _, event := range events {
 		if event.Type == linebot.EventTypeJoin {
