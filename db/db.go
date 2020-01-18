@@ -43,7 +43,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&data.Kaitou{}, &data.Game{})
+	db.AutoMigrate(&data.Kaitou{}, &data.Game{}, &data.Line{})
 	defer db.Close()
 }
 
