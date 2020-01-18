@@ -22,16 +22,6 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-//Gameの初期設定
-func gameInit(text string) data.Game {
-	var newGame data.Game
-	newGame.Odai = text
-	var now = time.Now()
-	newGame.CreatedAt = now
-	newGame.UpdatedAt = now
-	return newGame
-}
-
 func lineInit(id string, typeOfSource string) data.Line {
 	var newLine data.Line
 	newLine.TalkID = id

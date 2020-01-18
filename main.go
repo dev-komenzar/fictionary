@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strconv"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -13,6 +15,24 @@ import (
 	"github.com/tuckKome/fictionary/db"
 	"github.com/tuckKome/fictionary/handler"
 )
+
+//Gameの初期設定 POST "/newGame"で使う
+func gameInit(text string) data.Game {
+	var newGame data.Game
+	newGame.Odai = text
+	var now = time.Now()
+	newGame.CreatedAt = now
+	newGame.UpdatedAt = now
+	return newGame
+}
+
+//POST "/newGame"で使う
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 func main() {
 	router := gin.Default()
