@@ -13,25 +13,41 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<!-- BootstrapのJS読み込み -->
 	<script src="/js/bootstrap.min.js"></script>
+	<!--自作CSS -->
+	<style type="text/css">
+		<!--
+		/*ここに調整CSS記述*/
+		.jumbotron-fluid {
+			background: url(/resources/index2.jpeg) center no-repeat;
+			background-size: cover;
+		}
+
+		-->
+	</style>
 </head>
 
 <body>
-	<div class="container">
-		<header class="header">
-			<h1><a href="/">たほいや！</a></h1>
-		</header>
-		<div class="contents">
+	<div>
+		<!--　▼ ジャンボトロン　 -->
+		<div class="jumbotron jumbotron-fluid" style="height: 500px;">
+			<div class="container mx-auto" style="width: 90%;">
+				<h1 class="ml-0"><a href="/">たほいや！</a></h1>
 
-			<h2>お題は？</h2>
-			<div>
-				<form method="post" action="/newGame">
-					<input type="text" name="odai"><br>
-					<input type="submit" value="提出！">
-				</form>
+				<div class="text-center mb-4">
+					お題は？
+					<form method="post" action="/newGame">
+						<input type="text" name="odai"><br>
+						<div class="form-group form-check">
+							<input type="checkbox" class="form-check-input" name="checkLine">
+							<label class="form-check-label" for="checkLine">LINEに送信</label>
+						</div><br>
+						<input class="btn btn-primary mt-1" type="submit" value="提出！">
+					</form>
+				</div>
 			</div>
-
 		</div>
-		<div>
+		<!--　▲ ジャンボトロン　 -->
+		<div class="container text-center">
 			<h2>これまでのお題</h2>
 			{{ range .History}}
 			<a href="/games/{{.ID}}">「{{.Odai}}」</a><br>
