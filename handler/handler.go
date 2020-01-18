@@ -194,7 +194,7 @@ func getNotNill(a string, b string, c string) string {
 	}
 }
 
-func MakeNewLine(events []*Event) {
+func MakeNewLine(events []*linebot.Event) {
 	for _, event := range events {
 		if event.Type == linebot.EventTypeJoin {
 			userID := event.Source.UserID
