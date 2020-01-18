@@ -74,6 +74,11 @@
 			"Rev": "78223426e7c66d631117c0a9da1b7f3fde4d23a5"
 		},
 		{
+			"ImportPath": "github.com/line/line-bot-sdk-go/linebot",
+			"Comment": "v7.0.0-1-g18ff60a",
+			"Rev": "18ff60a2acd0927bbd553167dc3f318f25db219c"
+		},
+		{
 			"ImportPath": "github.com/mattn/go-isatty",
 			"Comment": "v0.0.9",
 			"Rev": "e1f7b56ace729e4a73a29a6b4fac6cd5fcda7ab3"
