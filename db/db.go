@@ -106,7 +106,7 @@ func InsertLine(line data.Line) {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(InsertLine)")
 	}
 	defer db.Close()
 
