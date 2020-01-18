@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresqlを使うためのライブラリ
 	"github.com/tuckKome/fictionary/data"
 )
 
@@ -89,7 +89,8 @@ func GetGames() []data.Game {
 	return games
 }
 
-func Insert(kaitou data.Kaitou) {
+//InsertKaitou : DBに新しいkaitouを追加
+func InsertKaitou(kaitou data.Kaitou) {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -98,4 +99,16 @@ func Insert(kaitou data.Kaitou) {
 	defer db.Close()
 
 	db.Create(&kaitou)
+}
+
+//InsertLine : DBに新しいlineを追加
+func InsertLine(line data.Line) {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	db.Create(&line)
 }
