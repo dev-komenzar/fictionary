@@ -36,7 +36,7 @@ func gameInit(text string) data.Game {
 
 func lineInit(id string, typeOfSource string) data.Line {
 	var newLine data.Line
-	newLine.talkID = id
+	newLine.TalkID = id
 	newLine.Type = typeOfSource
 	var now = time.Now()
 	newLine.CreatedAt = now
@@ -104,7 +104,7 @@ func CreateGame(c *gin.Context) {
 				log.Fatal(err)
 			}
 			for i := range lines {
-				to := lines[i].talkID
+				to := lines[i].TalkID
 				if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
 					log.Fatal(err)
 				}

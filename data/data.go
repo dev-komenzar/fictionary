@@ -22,6 +22,6 @@ type Game struct {
 // Group : LINE bot を友達追加したユーザー・招待したグループを保存
 type Line struct {
 	gorm.Model
-	talkID string //LINEのユーザー・グループ・ルームID
+	TalkID string //LINEのユーザー・グループ・ルームID
 	Type   string //user OR group OR room
 }
