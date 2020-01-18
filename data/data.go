@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-// 回答のDB　回答を集める
+// Kaitou : 回答のDB　回答を集める
 type Kaitou struct {
 	gorm.Model
 	User   string
@@ -13,9 +13,15 @@ type Kaitou struct {
 	GameID uint
 }
 
-// ゲームのDB index>履歴　にも使う
+// Game : ゲームのDB index>履歴　にも使う
 type Game struct {
 	gorm.Model
-	Odai   string //お題
-	Number uint //回答数
+	Odai string //お題
+}
+
+// Group : LINE bot を友達追加したユーザー・招待したグループを保存
+type Line struct {
+	gorm.Model
+	ID   string //LINEのユーザー・グループ・ルームID
+	Type string //user OR group OR room
 }
