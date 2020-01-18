@@ -34,10 +34,10 @@ func lineInit(id string, typeOfSource string) data.Line {
 
 //LineConnect : LINE bot 接続
 func LineConnect() *linebot.Client {
-	channelID := getEnv("CHANNEL_ID", "")
 	channelSecret := getEnv("CHANNEL_SECRET", "")
+	channelToken := getEnv("CHANNEL_ACCESS_TOKEN", "")
 
-	bot, err := linebot.New(channelSecret, channelID)
+	bot, err := linebot.New(channelSecret, channelToken)
 	if err != nil {
 		fmt.Println(err)
 		return nil
