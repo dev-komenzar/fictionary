@@ -1,25 +1,47 @@
 package handler
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresql を使うためのライブラリ
+	"github.com/line/line-bot-sdk-go/linebot"
+
 	"github.com/tuckKome/fictionary/data"
 	"github.com/tuckKome/fictionary/db"
 )
+
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 //Gameの初期設定
 func gameInit(text string) data.Game {
 	var newGame data.Game
 	newGame.Odai = text
-	newGame.Number = 0
 	var now = time.Now()
 	newGame.CreatedAt = now
 	newGame.UpdatedAt = now
 	return newGame
+}
+
+func lineInit(id string, typeOfSource string) data.Line {
+	var newLine data.Line
+	newLine.ID = id
+	newLine.Type = typeOfSource
+	var now = time.Now()
+	newLine.CreatedAt = now
+	newLine.UpdatedAt = now
+	return newLine
 }
 
 func makeAns(name string, ans string, id uint) data.Kaitou {
@@ -51,13 +73,14 @@ func Index(c *gin.Context) {
 //CreateGame は新しいゲームを作る
 func CreateGame(c *gin.Context) {
 	text := c.PostForm("odai")
+	lineUse := c.PostForm("checkLine")
+	fmt.Println(lineUse)
 	game := gameInit(text)
-	//dbInsert(game, c) //DB：ゲームに登録
 
 	connect := db.ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(CreateGame)")
 	}
 	defer db.Close()
 
@@ -65,6 +88,29 @@ func CreateGame(c *gin.Context) {
 
 	id := strconv.Itoa(int(game.ID))
 	uri := "/games/" + id + "/new"
+
+	if getEnv("GIN_MODE", "debug") == "release" {
+		if lineUse == "on" {
+			var lines []data.Line
+			db.Find(&lines)
+
+			lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
+
+			channelID := getEnv("CHANNEL_ID", "")
+			channelSecret := getEnv("CHANNEL_SECRET", "")
+
+			bot, err := linebot.New(channelID, channelSecret)
+			if err != nil {
+				log.Fatal(err)
+			}
+			for i := range lines {
+				to := lines[i].ID
+				if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
+					log.Fatal(err)
+				}
+			}
+		}
+	}
 	c.Redirect(302, uri)
 }
 
@@ -97,7 +143,7 @@ func CreateKaitou(c *gin.Context) {
 
 	kaitou := makeAns(name, ans, iduint)
 	//INSERT
-	db.Insert(kaitou)
+	db.InsertKaitou(kaitou)
 
 	uri := "/games/" + n + "/accepted"
 	c.Redirect(302, uri)
@@ -131,4 +177,46 @@ func GetList(c *gin.Context) {
 		"countOfUsers": numKaitou,
 		"kaitous":      answers,
 	})
+}
+
+func CreateGroup(c *gin.Context) {
+	channelID := getEnv("CHANNEL_ID", "")
+	channelSecret := getEnv("CHANNEL_SECRET", "")
+
+	bot, err := linebot.New(channelID, channelSecret)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	events, err := bot.ParseRequest(c.Request)
+	fmt.Println(events) //jsonを確認したい
+	for _, event := range events {
+		if event.Type == linebot.EventTypeJoin {
+			userID := event.Source.UserID
+			groupID := event.Source.GroupID
+			roomID := event.Source.RoomID
+
+			var line data.Line
+			d := getNotNill(userID, groupID, roomID)
+			if d == userID {
+				line = lineInit(d, "user")
+			} else if d == groupID {
+				line = lineInit(d, "group")
+			} else {
+				line = lineInit(d, "room")
+			}
+			db.InsertLine(line) //DBにLINEからの情報が登録された
+
+		}
+	}
+}
+
+func getNotNill(a string, b string, c string) string {
+	if a != "" {
+		return a
+	} else if b != "" {
+		return b
+	} else {
+		return c
+	}
 }
