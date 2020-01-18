@@ -183,7 +183,7 @@ func CreateGroup(c *gin.Context) {
 	channelID := getEnv("CHANNEL_ID", "")
 	channelSecret := getEnv("CHANNEL_SECRET", "")
 
-	bot, err := linebot.New(channelID, channelSecret)
+	bot, err := linebot.New(channelSecret, channelID)
 	if err != nil {
 		fmt.Println(err)
 		return
