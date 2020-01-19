@@ -260,10 +260,13 @@ func CreateLine(bot *linebot.Client) gin.HandlerFunc {
 			switch event.Type {
 			case linebot.EventTypeJoin:
 				db.InsertLine(line) //DBにLINEからの情報が登録された
+				fmt.Printf("New Line created. ID %s \n", string(line.ID))
 			case linebot.EventTypeLeave:
 				db.DeleteLine(line)
+				fmt.Printf("ID %s is deleted \n", string(line.ID))
 			case linebot.EventTypeUnfollow:
 				db.DeleteLine(line)
+				fmt.Printf("ID %s is deleted \n", string(line.ID))
 			}
 
 		}
