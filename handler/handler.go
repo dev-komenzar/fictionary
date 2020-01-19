@@ -2,12 +2,14 @@ package handler
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresql を使うためのライブラリ
 	"github.com/line/line-bot-sdk-go/linebot"
 
@@ -20,6 +22,16 @@ func getEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+//Gameの初期設定 POST "/newGame"で使う
+func gameInit(text string) data.Game {
+	var newGame data.Game
+	newGame.Odai = text
+	var now = time.Now()
+	newGame.CreatedAt = now
+	newGame.UpdatedAt = now
+	return newGame
 }
 
 func lineInit(id string, typeOfSource string) data.Line {
@@ -184,6 +196,7 @@ func getNotNill(a string, b string, c string) string {
 	}
 }
 
+//MakeNewLine はuser, group, room いずれかのIDをDBに保存
 func MakeNewLine(events []*linebot.Event) {
 	for _, event := range events {
 		if event.Type == linebot.EventTypeJoin {
@@ -203,5 +216,43 @@ func MakeNewLine(events []*linebot.Event) {
 			db.InsertLine(line) //DBにLINEからの情報が登録された
 
 		}
+	}
+}
+
+//CreateGame は「*linebot.Clientを引数にした」新しいゲームを作る関数
+func CreateGame(bot *linebot.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		text := c.PostForm("odai")
+		lineUse := c.PostForm("checkLine")
+		fmt.Println(lineUse)
+		game := gameInit(text)
+
+		connect := db.ArgInit()
+		db, err := gorm.Open("postgres", connect)
+		if err != nil {
+			panic("データベース開ず(CreateGame)")
+		}
+		defer db.Close()
+
+		db.Create(&game)
+
+		id := strconv.Itoa(int(game.ID))
+		uri := "/games/" + id + "/new"
+
+		if getEnv("GIN_MODE", "debug") == "release" {
+			if lineUse == "on" {
+				var lines []data.Line
+				db.Find(&lines)
+
+				lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
+				for i := range lines {
+					to := lines[i].TalkID
+					if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
+						log.Fatal(err)
+					}
+				}
+			}
+		}
+		c.Redirect(302, uri)
 	}
 }
