@@ -123,5 +123,6 @@ func DeleteLine(line data.Line) {
 	}
 	defer db.Close()
 
-	db.Delete(&line)
+	//TalkIDが一致するものを削除
+	db.Where("talk_id = ?", line.TalkID).Delete(&line)
 }
