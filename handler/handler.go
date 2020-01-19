@@ -196,29 +196,6 @@ func getNotNill(a string, b string, c string) string {
 	}
 }
 
-//makeNewLine はuser, group, room いずれかのIDをDBに保存
-func makeNewLine(events []*linebot.Event) {
-	for _, event := range events {
-		if event.Type == linebot.EventTypeJoin {
-			userID := event.Source.UserID
-			groupID := event.Source.GroupID
-			roomID := event.Source.RoomID
-
-			var line data.Line
-			d := getNotNill(userID, groupID, roomID)
-			if d == userID {
-				line = lineInit(d, "user")
-			} else if d == groupID {
-				line = lineInit(d, "group")
-			} else {
-				line = lineInit(d, "room")
-			}
-			db.InsertLine(line) //DBにLINEからの情報が登録された
-
-		}
-	}
-}
-
 //CreateGame は「*linebot.Clientを引数にした」新しいゲームを作る関数
 func CreateGame(bot *linebot.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
@@ -266,6 +243,29 @@ func CreateLine(bot *linebot.Client) gin.HandlerFunc {
 			log.Fatal(err)
 		}
 		fmt.Println(events) //jsonを確認したい
-		makeNewLine(events)
+		for _, event := range events {
+			userID := event.Source.UserID
+			groupID := event.Source.GroupID
+			roomID := event.Source.RoomID
+
+			var line data.Line
+			d := getNotNill(userID, groupID, roomID)
+			if d == userID {
+				line = lineInit(d, "user")
+			} else if d == groupID {
+				line = lineInit(d, "group")
+			} else {
+				line = lineInit(d, "room")
+			}
+			switch event.Type {
+			case linebot.EventTypeJoin:
+				db.InsertLine(line) //DBにLINEからの情報が登録された
+			case linebot.EventTypeLeave:
+				db.DeleteLine(line)
+			case linebot.EventTypeUnfollow:
+				db.DeleteLine(line)
+			}
+
+		}
 	}
 }
