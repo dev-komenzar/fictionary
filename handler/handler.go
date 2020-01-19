@@ -244,7 +244,8 @@ func CreateGame(bot *linebot.Client) gin.HandlerFunc {
 				var lines []data.Line
 				db.Find(&lines)
 
-				lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
+				url := getEnv("HOST_ADDRESS", "localhost:8080") + uri
+				lineMessage := fmt.Sprintf("お題は「%s」\nこのURLから回答してね\n%s", text, url)
 				for i := range lines {
 					to := lines[i].TalkID
 					if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
