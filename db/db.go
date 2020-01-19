@@ -16,7 +16,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-//ArgInt はOpenの引数を作る
+//ArgInit はOpenの引数を作る
 func ArgInit() string {
 	host := getEnv("FICTIONARY_DATABASE_HOST", "127.0.0.1")
 	port := getEnv("FICTIONARY_PORT", "5432")
@@ -36,7 +36,7 @@ func ArgInit() string {
 	return dbinfo
 }
 
-//DB初期化
+//Init : DB初期化
 func Init() {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
@@ -47,7 +47,7 @@ func Init() {
 	defer db.Close()
 }
 
-//DBから一つ取り出す：回答ページで使用
+//GetOne : DBから一つ取り出す：回答ページで使用
 func GetOne(id int) data.Game {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
@@ -61,7 +61,7 @@ func GetOne(id int) data.Game {
 	return game
 }
 
-//DBから[]Kaitouを取り出す
+//GetKaitou : DBから[]Kaitouを取り出す
 func GetKaitou(id int) []data.Kaitou {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
@@ -75,6 +75,7 @@ func GetKaitou(id int) []data.Kaitou {
 	return kaitous
 }
 
+//GetGames はDBからゲーム一覧を取得
 func GetGames() []data.Game {
 	var games []data.Game
 
@@ -111,4 +112,16 @@ func InsertLine(line data.Line) {
 	defer db.Close()
 
 	db.Create(&line)
+}
+
+//DeleteLine はDBから該当するlineを削除。「退出」「アンフォロー」で使用
+func DeleteLine(line data.Line) {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(InsertLine)")
+	}
+	defer db.Close()
+
+	db.Delete(&line)
 }
