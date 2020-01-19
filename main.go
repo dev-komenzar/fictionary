@@ -1,9 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/gin-gonic/gin"
 
 	"github.com/tuckKome/fictionary/db"
@@ -37,14 +34,7 @@ func main() {
 	router.GET("/games/:id", handler.GetList)
 
 	//LINE bot からのwebhookを受ける
-	router.POST("/line", func(c *gin.Context) {
-		events, err := bot.ParseRequest(c.Request)
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(events) //jsonを確認したい
-		handler.MakeNewLine(events)
-	})
+	router.POST("/line", handler.CreateLine(bot))
 
 	//起動
 	router.Run()

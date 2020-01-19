@@ -196,8 +196,8 @@ func getNotNill(a string, b string, c string) string {
 	}
 }
 
-//MakeNewLine はuser, group, room いずれかのIDをDBに保存
-func MakeNewLine(events []*linebot.Event) {
+//makeNewLine はuser, group, room いずれかのIDをDBに保存
+func makeNewLine(events []*linebot.Event) {
 	for _, event := range events {
 		if event.Type == linebot.EventTypeJoin {
 			userID := event.Source.UserID
@@ -254,5 +254,17 @@ func CreateGame(bot *linebot.Client) gin.HandlerFunc {
 			}
 		}
 		c.Redirect(302, uri)
+	}
+}
+
+//CreateLine は「*linebot.Clientを引数にする」ユーザー・グループIDをDBに登録するhandler
+func CreateLine(bot *linebot.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		events, err := bot.ParseRequest(c.Request)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println(events) //jsonを確認したい
+		makeNewLine(events)
 	}
 }
