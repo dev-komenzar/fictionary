@@ -122,10 +122,15 @@ func CreateKaitou(c *gin.Context) {
 func GetAccepted(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		panic(err)
+	}
 
+	game := db.GetOne(id)
 	uri := "/games/" + n
 	uri2 := "/games/" + n + "/new"
-	c.HTML(200, "phase22.html", gin.H{"uri": uri, "uri2": uri2})
+	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri, "uri2": uri2})
 }
 
 //GetList は回答一覧を取得
