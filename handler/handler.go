@@ -83,44 +83,6 @@ func Index(c *gin.Context) {
 	c.HTML(200, "index.html", gin.H{"History": h})
 }
 
-/*
-//CreateGame は新しいゲームを作る
-func CreateGame(c *gin.Context) {
-	text := c.PostForm("odai")
-	lineUse := c.PostForm("checkLine")
-	fmt.Println(lineUse)
-	game := gameInit(text)
-
-	connect := db.ArgInit()
-	db, err := gorm.Open("postgres", connect)
-	if err != nil {
-		panic("データベース開ず(CreateGame)")
-	}
-	defer db.Close()
-
-	db.Create(&game)
-
-	id := strconv.Itoa(int(game.ID))
-	uri := "/games/" + id + "/new"
-
-	if getEnv("GIN_MODE", "debug") == "release" {
-		if lineUse == "on" {
-			var lines []data.Line
-			db.Find(&lines)
-
-			lineMessage := fmt.Sprintf("このURLから回答してね\n%s", uri)
-			for i := range lines {
-				to := lines[i].TalkID
-				if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
-					log.Fatal(err)
-				}
-			}
-		}
-	}
-	c.Redirect(302, uri)
-}
-*/
-
 //GetKaitou は回答フォームを取得する
 func GetKaitou(c *gin.Context) {
 	//idをint型に変換
