@@ -11,7 +11,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresql を使うためのライブラリ
+
 	"github.com/line/line-bot-sdk-go/linebot"
+
+	"github.com/dghubble/go-twitter/twitter"
+	"github.com/dghubble/oauth1"
 
 	"github.com/tuckKome/fictionary/data"
 	"github.com/tuckKome/fictionary/db"
@@ -55,6 +59,23 @@ func LineConnect() *linebot.Client {
 		return nil
 	}
 	return bot
+}
+
+//TwitterConnect : twitter bot 接続
+func TwitterConnect() *twitter.Client {
+	consumerKey := getEnv("TWITTER_CONSUMER_KEY", "")
+	consumerSecret := getEnv("TWITTE_CONSUMER_SECRET", "")
+	accessToken := getEnv("TWITTER_ACCESS_TOKEN", "")
+	accessSecret := getEnv("TWITTER_ACCESS_SECRET", "")
+
+	config := oauth1.NewConfig(consumerKey, consumerSecret)
+	token := oauth1.NewToken(accessToken, accessSecret)
+	// http.Client will automatically authorize Requests
+	httpClient := config.Client(oauth1.NoContext, token)
+
+	// Twitter client
+	client := twitter.NewClient(httpClient)
+	return client
 }
 
 func makeAns(name string, ans string, id uint) data.Kaitou {
@@ -164,11 +185,11 @@ func getNotNill(a string, b string, c string) string {
 }
 
 //CreateGame は「*linebot.Clientを引数にした」新しいゲームを作る関数
-func CreateGame(bot *linebot.Client) gin.HandlerFunc {
+func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		text := c.PostForm("odai")
 		lineUse := c.PostForm("checkLine")
-		fmt.Println(lineUse)
+		twitterUse := c.PostForm("checkTwitter")
 		game := gameInit(text)
 
 		connect := db.ArgInit()
@@ -183,21 +204,27 @@ func CreateGame(bot *linebot.Client) gin.HandlerFunc {
 		id := strconv.Itoa(int(game.ID))
 		uri := "/games/" + id + "/new"
 
+		//LINE bot・twitterに投げる
 		if getEnv("GIN_MODE", "debug") == "release" {
+			url := getEnv("HOST_ADDRESS", "localhost:8080") + uri
+			message := fmt.Sprintf("お題は「%s」\nこのURLから回答してね\n%s", text, url)
 			if lineUse == "on" {
 				var lines []data.Line
 				db.Find(&lines)
 
-				url := getEnv("HOST_ADDRESS", "localhost:8080") + uri
-				lineMessage := fmt.Sprintf("お題は「%s」\nこのURLから回答してね\n%s", text, url)
 				for i := range lines {
 					to := lines[i].TalkID
-					if _, err := bot.PushMessage(to, linebot.NewTextMessage(lineMessage)).Do(); err != nil {
+					if _, err := bot.PushMessage(to, linebot.NewTextMessage(message)).Do(); err != nil {
 						log.Fatal(err)
 					}
 				}
 			}
+			if twitterUse == "on" {
+				// Send a Tweet
+				twitterClient.Statuses.Update(message, nil)
+			}
 		}
+
 		c.Redirect(302, uri)
 	}
 }

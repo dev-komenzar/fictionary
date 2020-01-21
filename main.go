@@ -18,10 +18,12 @@ func main() {
 
 	bot := handler.LineConnect()
 
+	twitterClient := handler.TwitterConnect()
+
 	//はじめのページ：お題を入力：過去のお題
 	router.GET("/", handler.Index)
 
-	router.POST("/newGame", handler.CreateGame(bot))
+	router.POST("/newGame", handler.CreateGame(bot, twitterClient))
 
 	router.GET("/games/:id/new", handler.GetKaitou)
 
