@@ -1,0 +1,74 @@
+hash: 46e3bced518aada5d70c38240e246441108ee68ea464e38085100707d3332891
+updated: 2020-01-22T02:03:44.383975+09:00
+imports:
+- name: github.com/cenkalti/backoff
+  version: a9a4cec6c9a26336ca42700ccc319ca842be56c0
+- name: github.com/dghubble/go-twitter
+  version: 39e5462e111ffe165c62a88e2c25e1c1d1085bdb
+  subpackages:
+  - twitter
+- name: github.com/dghubble/oauth1
+  version: 19d7291ba290f420ccea50e076322aca95f27fcd
+- name: github.com/dghubble/sling
+  version: 0997dd0739eecf8d0d3e5e6e3a9d5e81a1fd5056
+- name: github.com/gin-contrib/sse
+  version: 43f0f29dbd2b3f0feeebff91fd9cda22db296938
+- name: github.com/gin-gonic/gin
+  version: 15ced05c5316609bce5b43389f8e3f06102a8b18
+  subpackages:
+  - binding
+  - internal/json
+  - render
+- name: github.com/go-playground/locales
+  version: 9f105231d3a5f6877a2bf8321dfa15ea6f844b1b
+  subpackages:
+  - currency
+- name: github.com/go-playground/universal-translator
+  version: f87b1403479a348651dbf5f07f5cc6e5fcf07008
+- name: github.com/golang/protobuf
+  version: 4e55bbcbfaa105a596caba5bbc20d392806beda9
+  subpackages:
+  - proto
+- name: github.com/google/go-querystring
+  version: c8c88dbee036db4e4808d1f2ec8c2e15e11c3f80
+  subpackages:
+  - query
+- name: github.com/jinzhu/gorm
+  version: 79a77d771dee4e4b60e9c543e8663bbc80466670
+  subpackages:
+  - dialects/postgres
+- name: github.com/jinzhu/inflection
+  version: f5c5f50e6090ae76a29240b61ae2a90dd810112e
+- name: github.com/json-iterator/go
+  version: 49c900ee46e6efa73ea31a4eef029bc0a19a1ed9
+- name: github.com/leodido/go-urn
+  version: a0f5013415294bb94553821ace21a1a74c0298cc
+- name: github.com/lib/pq
+  version: 9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be
+  subpackages:
+  - hstore
+  - oid
+  - scram
+- name: github.com/line/line-bot-sdk-go
+  version: de05f061145ab5bd44830c42052cbed14b3839f0
+  subpackages:
+  - linebot
+- name: github.com/mattn/go-isatty
+  version: 8a28c40e0162ba2a507244688ec0e46085b5ebfd
+- name: github.com/modern-go/concurrent
+  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
+- name: github.com/modern-go/reflect2
+  version: 94122c33edd36123c84d5368cfb2b69df93a0ec8
+- name: github.com/ugorji/go
+  version: 42bc974514ff101a54c6b72a0e4dee29d96c0b26
+  subpackages:
+  - codec
+- name: golang.org/x/sys
+  version: 34d275377bf96a094e8d5b0c61750ddd54cd6b36
+  subpackages:
+  - unix
+- name: gopkg.in/go-playground/validator.v9
+  version: 21c910fc6d9c3556c28252b04beb17de0c2d40ec
+- name: gopkg.in/yaml.v2
+  version: 1f64d6156d11335c3f22d9330b0ad14fc1e789ce
+testImports: []

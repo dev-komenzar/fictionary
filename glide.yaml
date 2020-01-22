@@ -1,0 +1,17 @@
+package: github.com/tuckKome/fictionary
+import:
+- package: github.com/dghubble/go-twitter
+  subpackages:
+  - twitter
+- package: github.com/dghubble/oauth1
+  version: ^0.6.0
+- package: github.com/gin-gonic/gin
+  version: ^1.5.0
+- package: github.com/jinzhu/gorm
+  version: ^1.9.12
+  subpackages:
+  - dialects/postgres
+- package: github.com/line/line-bot-sdk-go
+  version: ^7.0.0
+  subpackages:
+  - linebot
