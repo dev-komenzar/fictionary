@@ -221,7 +221,10 @@ func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerF
 			}
 			if twitterUse == "on" {
 				// Send a Tweet
-				twitterClient.Statuses.Update(message, nil)
+				_, _, err := twitterClient.Statuses.Update(message, nil)
+				if err != nil {
+					log.Fatal(err)
+				}
 			}
 		}
 
