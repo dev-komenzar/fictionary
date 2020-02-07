@@ -184,7 +184,7 @@ func getNotNill(a string, b string, c string) string {
 	}
 }
 
-//CreateGame は「*linebot.Clientを引数にした」新しいゲームを作る関数
+//CreateGame は「*linebot.Client型を引数にした」新しいゲームを作る関数
 func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		text := c.PostForm("odai")
