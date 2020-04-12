@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"time"
+	"html/template"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -135,6 +136,8 @@ func CreateKaitou(c *gin.Context) {
 	//INSERT
 	db.InsertKaitou(kaitou)
 
+	go 
+
 	uri := "/games/" + n + "/accepted"
 	c.Redirect(302, uri)
 }
@@ -171,6 +174,23 @@ func GetList(c *gin.Context) {
 		"odai":         game.Odai,
 		"countOfUsers": numKaitou,
 		"kaitous":      answers,
+	})
+}
+
+func createPhase3(id int) {
+	g := db.GetOne(id)
+	a := db.GetKaitou(id)
+	shuffle(a)
+	k = len(answers)
+
+	c, _ := os.Getwd()
+	p := c + `/templates/phase3.html`
+	nf, err := os.Create(p)
+	tpl, err := template.ParseFiles("phase3template.html")
+	tpl.Execute(nf, gin.H{
+		"odai": g.Odai,
+		"countOfUsers": k,
+		"kaitous": a,
 	})
 }
 
