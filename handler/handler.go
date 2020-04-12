@@ -2,12 +2,12 @@ package handler
 
 import (
 	"fmt"
+	"html/template"
 	"log"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
-	"html/template"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -136,7 +136,7 @@ func CreateKaitou(c *gin.Context) {
 	//INSERT
 	db.InsertKaitou(kaitou)
 
-	go 
+	go createPhase3(id)
 
 	uri := "/games/" + n + "/accepted"
 	c.Redirect(302, uri)
@@ -159,38 +159,31 @@ func GetAccepted(c *gin.Context) {
 
 //GetList は回答一覧を取得
 func GetList(c *gin.Context) {
-	var numKaitou int
-
-	n := c.Param("id")
-	id, err := strconv.Atoi(n)
-	if err != nil {
-		panic(err)
-	}
-	game := db.GetOne(id)
-	answers := db.GetKaitou(id)
-	shuffle(answers)
-	numKaitou = len(answers)
-	c.HTML(200, "phase3.html", gin.H{
-		"odai":         game.Odai,
-		"countOfUsers": numKaitou,
-		"kaitous":      answers,
-	})
+	c.HTML(200, "phase3.html", gin.H{})
 }
 
 func createPhase3(id int) {
 	g := db.GetOne(id)
 	a := db.GetKaitou(id)
 	shuffle(a)
-	k = len(answers)
+	k := len(a)
 
 	c, _ := os.Getwd()
 	p := c + `/templates/phase3.html`
 	nf, err := os.Create(p)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer nf.Close()
+
 	tpl, err := template.ParseFiles("phase3template.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 	tpl.Execute(nf, gin.H{
-		"odai": g.Odai,
+		"odai":         g.Odai,
 		"countOfUsers": k,
-		"kaitous": a,
+		"kaitous":      a,
 	})
 }
 
