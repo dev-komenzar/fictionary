@@ -2,10 +2,10 @@ package handler
 
 import (
 	"fmt"
-	"html/template"
 	"log"
 	"math/rand"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 
@@ -92,10 +92,25 @@ func makeAns(name string, ans string, id uint) data.Kaitou {
 }
 
 func shuffle(a []data.Kaitou) {
+	//[0,1,2,...,k-1]を用意
+	k := len(a)
+	arr := make([]int, k)
+	for i := 0; i < k; i++ {
+		arr[i] = i
+	}
+
+	//Fisher–Yates シャッフル
 	rand.Seed(time.Now().UnixNano())
-	for i := range a {
+	for i := k - 1; i > 0; i-- {
 		j := rand.Intn(i + 1)
-		a[i], a[j] = a[j], a[i]
+		tmp := arr[i]
+		arr[i] = arr[j]
+		arr[j] = tmp
+	}
+
+	//シャッフルされたarr を[]Kaitou に入れる
+	for i := range a {
+		a[i].Base = arr[i]
 	}
 }
 
@@ -114,7 +129,7 @@ func GetKaitou(c *gin.Context) {
 		panic(err)
 	}
 
-	game := db.GetOne(id)
+	game := db.GetGame(id)
 	uri := "/games/" + n + "/new"
 	c.HTML(200, "phase21.html", gin.H{"odai": game.Odai, "uri": uri})
 }
@@ -136,7 +151,9 @@ func CreateKaitou(c *gin.Context) {
 	//INSERT
 	db.InsertKaitou(kaitou)
 
-	go createPhase3(id)
+	a := db.GetKaitous(id)
+	shuffle(a)
+	db.UpdateKaitous(a)
 
 	uri := "/games/" + n + "/accepted"
 	c.Redirect(302, uri)
@@ -151,7 +168,7 @@ func GetAccepted(c *gin.Context) {
 		panic(err)
 	}
 
-	game := db.GetOne(id)
+	game := db.GetGame(id)
 	uri := "/games/" + n
 	uri2 := "/games/" + n + "/new"
 	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri, "uri2": uri2})
@@ -159,29 +176,23 @@ func GetAccepted(c *gin.Context) {
 
 //GetList は回答一覧を取得
 func GetList(c *gin.Context) {
-	c.HTML(200, "phase3.html", gin.H{})
-}
-
-func createPhase3(id int) {
-	g := db.GetOne(id)
-	a := db.GetKaitou(id)
-	shuffle(a)
-	k := len(a)
-
-	c, _ := os.Getwd()
-	p := c + `/templates/phase3.html`
-	nf, err := os.Create(p)
+	//idを取得
+	n := c.Param("id")
+	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
-	defer nf.Close()
 
-	tpl, err := template.ParseFiles("phase3template.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	tpl.Execute(nf, gin.H{
-		"odai":         g.Odai,
+	game := db.GetGame(id)
+
+	a := db.GetKaitous(id) //回答一覧を取得
+
+	//Kaitou.Base　で並び替える
+	sort.SliceStable(a, func(i, j int) bool { return a[i].Base < a[j].Base })
+
+	k := len(a) //coutOfUsers のため
+	c.HTML(200, "phase3.html", gin.H{
+		"odai":         game.Odai,
 		"countOfUsers": k,
 		"kaitous":      a,
 	})

@@ -11,7 +11,7 @@ type Kaitou struct {
 	Answer string
 	Note   string
 	GameID uint
-	Base   uint
+	Base   int
 }
 
 // Game : ゲームのDB index>履歴　にも使う
@@ -20,7 +20,7 @@ type Game struct {
 	Odai string //お題
 }
 
-// Group : LINE bot を友達追加したユーザー・招待したグループを保存
+// Line : LINE bot を友達追加したユーザー・招待したグループを保存
 type Line struct {
 	gorm.Model
 	TalkID string //LINEのユーザー・グループ・ルームID

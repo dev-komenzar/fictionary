@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"os"
+	"sync"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres" //postgresqlを使うためのライブラリ
@@ -47,8 +48,8 @@ func Init() {
 	defer db.Close()
 }
 
-//GetOne : DBから一つ取り出す：回答ページで使用
-func GetOne(id int) data.Game {
+//GetGame : DBから一つ取り出す：回答ページで使用
+func GetGame(id int) data.Game {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -61,8 +62,8 @@ func GetOne(id int) data.Game {
 	return game
 }
 
-//GetKaitou : DBから[]Kaitouを取り出す
-func GetKaitou(id int) []data.Kaitou {
+//GetKaitous : DBから[]Kaitouを取り出す
+func GetKaitous(id int) []data.Kaitou {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -100,6 +101,27 @@ func InsertKaitou(kaitou data.Kaitou) {
 	defer db.Close()
 
 	db.Create(&kaitou)
+}
+
+//UpdateKaitous は解答リストをupdate する
+func UpdateKaitous(ks []data.Kaitou) {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	var wg sync.WaitGroup
+	for i := range ks {
+		wg.Add(1)
+		b := ks[i].Base
+		go func(num int) {
+			defer wg.Done()
+			db.Model(&ks[num]).Update("base", b)
+		}(i)
+	}
+	wg.Wait()
 }
 
 //InsertLine : DBに新しいlineを追加
