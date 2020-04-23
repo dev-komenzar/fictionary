@@ -11,6 +11,7 @@ type Kaitou struct {
 	Answer string
 	Note   string
 	GameID uint
+	Base   uint
 }
 
 // Game : ゲームのDB index>履歴　にも使う
