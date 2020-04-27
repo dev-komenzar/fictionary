@@ -22,24 +22,26 @@
 		<header class="header">
 			<h1><a href="/">たほいや！</a></h1>
 		</header>
+
 		<div class="contents">
 
 			<h2>お題は「{{.odai}}」です。</h2>
 			<p>あなたの知っている意味を書いてください。</p>
-			<div>
-				<div>
-					<div>回答者の名前</div>
-					<form method="post" action={{.uri}}>
-						<input type="text" name="name"><br>
-
-						<div>「{{.odai}}」の意味は？</div><br>
-						<input type="text" name="answer"><br>
-						<input type="submit" value="提出！">
-					</form>
-					<div>回答に招待するには、このページのURLを送ってあげてください。</div>
+			<form action="{{.uri}}" method="post">
+				<div class="form-group">
+					<label for="name">回答者の名前（お好きな名前で）</label>
+					<input type="text" class="form-control" id="name" placeholder="くまの遼子">
 				</div>
-			</div>
+				<div class="form-group">
+					<label for="answer">「{{.odai}}」の意味は？</label>
+					<textarea id="answer" name="answer" rows="8" cols="80" class="form-control"></textarea>
+				</div>
+				<button type="submit" class="btn btn-primary">提出する！</button>
+			</form>
+			<div>回答に招待するには、このページのURLを送ってあげてください。</div>
 		</div>
+
+	</div>
 	</div>
 </body>
 
