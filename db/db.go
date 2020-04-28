@@ -44,7 +44,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&data.Kaitou{}, &data.Game{}, &data.Line{})
+	db.AutoMigrate(&data.Kaitou{}, &data.Game{}, &data.Line{}, &data.Vote{})
 	defer db.Close()
 }
 
@@ -60,6 +60,19 @@ func GetGame(id int) data.Game {
 	var game data.Game
 	db.First(&game, id)
 	return game
+}
+
+func GetKaitou(id int) data.Kaitou {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(InsertLine)")
+	}
+	defer db.Close()
+
+	var k data.Kaitou
+	db.First(&k, id)
+	return k
 }
 
 //GetKaitous : DBから[]Kaitouを取り出す
@@ -78,8 +91,6 @@ func GetKaitous(id int) []data.Kaitou {
 
 //GetGames はDBからゲーム一覧を取得
 func GetGames() []data.Game {
-	var games []data.Game
-
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -87,8 +98,23 @@ func GetGames() []data.Game {
 	}
 	defer db.Close()
 
+	var games []data.Game
 	db.Find(&games)
 	return games
+}
+
+//GetVotes はひとつのKaitou に対する Votes を取得
+func GetVotes(b data.Kaitou) []data.Vote {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	var votes []data.Vote
+	db.Model(&b).Related(&votes)
+	return votes
 }
 
 //InsertKaitou : DBに新しいkaitouを追加
@@ -147,4 +173,17 @@ func DeleteLine(line data.Line) {
 
 	//TalkIDが一致するものを削除
 	db.Where("talk_id = ?", line.TalkID).Delete(&line)
+}
+
+//VoteTo は Kaitou に Vote を紐付ける
+func VoteTo(k data.Kaitou, v data.Vote) {
+	connect := ArgInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(InsertLine)")
+	}
+	defer db.Close()
+
+	db.First(&k)
+	db.Model(&k).Association("Votes").Append(&v)
 }

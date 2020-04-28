@@ -35,6 +35,9 @@ func main() {
 	//「みんなの回答」ページを表示
 	router.GET("/games/:id", handler.GetList)
 
+	//「投票」機能
+	router.POST("/games/:id", handler.CreateVote)
+
 	//LINE bot からのwebhookを受ける
 	router.POST("/line", handler.CreateLine(bot))
 

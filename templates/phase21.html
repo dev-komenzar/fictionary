@@ -1,45 +1,54 @@
 <!DOCTYPE html>
 <html lang="ja">
-<!--集める：親が正解を入力する-->
-<!--出題->○集める->一覧表示->投票->回答者open->閲覧-->
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>{{.odai}}｜フィクショナリー</title>
-	<!-- BootstrapのCSS読み込み -->
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<!-- jQuery読み込み -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<!-- BootstrapのJS読み込み -->
-	<script src="/js/bootstrap.min.js"></script>
-</head>
+  <!--集める：親が正解を入力する-->
+  <!--出題->○集める->一覧表示->投票->回答者open->閲覧-->
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{.odai}}｜フィクショナリー</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="/js/bootstrap.min.js"></script>
+  </head>
 
-<body>
-	<div class="container">
-		<header class="header">
-			<h1><a href="/">たほいや！</a></h1>
-		</header>
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1><a href="/">たほいや！</a></h1>
+      </header>
 
-		<div class="contents">
-
-			<h2>お題は「{{.odai}}」です。</h2>
-			<p>あなたの知っている意味を書いてください。</p>
-			<form action="{{.uri}}" method="post">
-				<div class="form-group">
-					<label for="name">回答者の名前（お好きな名前で）</label>
-					<input type="text" class="form-control" id="name" placeholder="たほいやーネーム">
-				</div>
-				<div class="form-group">
-					<label for="answer">「{{.odai}}」の意味は？</label>
-					<textarea id="answer" name="answer" rows="8" cols="80" class="form-control"></textarea>
-				</div>
-				<button type="submit" class="btn btn-primary">提出する！</button>
-			</form>
-			<div>回答に招待するには、このページのURLを送ってあげてください。</div>
-		</div>
-
-	</div>
-</body>
-
+      <div class="contents">
+        <h2>お題は「{{.odai}}」です。</h2>
+        <p>あなたの知っている意味を書いてください。</p>
+        <form action="{{.uri}}" method="POST">
+          <div class="form-group">
+            <label for="name">回答者の名前（お好きな名前で）</label>
+            <input
+              type="text"
+              class="form-control"
+              id="name"
+              name="name"
+              placeholder="たほいやーネーム"
+            />
+          </div>
+          <div class="form-group">
+            <label for="answer">「{{.odai}}」の意味は？</label>
+            <textarea
+              id="answer"
+              name="answer"
+              rows="8"
+              cols="80"
+              class="form-control"
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">提出する！</button>
+        </form>
+        <div>回答に招待するには、このページのURLを送ってあげてください。</div>
+      </div>
+    </div>
+  </body>
 </html>

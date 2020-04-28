@@ -11,7 +11,8 @@ type Kaitou struct {
 	Answer string
 	Note   string
 	GameID uint
-	Base   int
+	Base   int //シャッフルのための変数
+	Votes  []Vote
 }
 
 // Game : ゲームのDB index>履歴　にも使う
@@ -20,9 +21,16 @@ type Game struct {
 	Odai string //お題
 }
 
-// Line : LINE bot を友達追加したユーザー・招待したグループを保存
+// Line : Line bot を友達追加したユーザー・招待したグループを保存
 type Line struct {
 	gorm.Model
 	TalkID string //LINEのユーザー・グループ・ルームID
 	Type   string //user OR group OR room
+}
+
+// Vote : 投票。Kaitou has many Votes
+type Vote struct {
+	gorm.Model
+	KaitouID  int
+	CreatedBy string
 }

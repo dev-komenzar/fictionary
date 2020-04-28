@@ -159,6 +159,28 @@ func CreateKaitou(c *gin.Context) {
 	c.Redirect(302, uri)
 }
 
+//CreateVote は１つ投票を insert して、 Kaitou に紐づける
+func CreateVote(c *gin.Context) {
+	//idを取得
+	n := c.Param("id")
+
+	kaiIDstring := c.PostForm("slct")
+	kID, err := strconv.Atoi(kaiIDstring)
+	if err != nil {
+		log.Fatal(err)
+	}
+	k := db.GetKaitou(kID)
+
+	who := c.PostForm("playerName")
+	v := data.Vote{CreatedBy: who, KaitouID: kID}
+	v.CreatedBy = who
+
+	db.VoteTo(k, v) //Kaitou に Vote を紐つける
+
+	uri := "/games/" + n
+	c.Redirect(302, uri)
+}
+
 //GetAccepted はAcceptedページを取得
 func GetAccepted(c *gin.Context) {
 	//idを取得
@@ -180,21 +202,29 @@ func GetList(c *gin.Context) {
 	n := c.Param("id")
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	game := db.GetGame(id)
 
 	a := db.GetKaitous(id) //回答一覧を取得
+	//has many relation を取得
+	for i := range a {
+		a[i].Votes = db.GetVotes(a[i])
+	}
 
 	//Kaitou.Base　で並び替える
 	sort.SliceStable(a, func(i, j int) bool { return a[i].Base < a[j].Base })
 
 	k := len(a) //coutOfUsers のため
+
+	uri := "/games/" + n //uri のため
+
 	c.HTML(200, "phase3.html", gin.H{
 		"odai":         game.Odai,
 		"countOfUsers": k,
 		"kaitous":      a,
+		"uri":          uri,
 	})
 }
 
