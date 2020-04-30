@@ -40,7 +40,9 @@
         <h1><a href="/">たほいや！</a></h1>
       </header>
 
-      <div class="row"><h2 class="mx-auto">お題「{{.odai}}」</h2></div>
+      <div class="row sticky-top">
+        <h2 class="mx-auto mt-3 rounded-lg bg-white p-3">お題「{{.odai}}」</h2>
+      </div>
       <div class="row">
         <div>回答数：{{.countOfUsers}}</div>
       </div>
@@ -130,7 +132,6 @@
         </div>
 
         <div class="input-group col-md-5">
-          
           <select class="custom-select" id="slct" name="slct" required>
             <option value="" selected>本当の答えは？</option>
             {{range $i, $a := .kaitous}}
