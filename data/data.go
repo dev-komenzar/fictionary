@@ -18,7 +18,8 @@ type Kaitou struct {
 // Game : ゲームのDB index>履歴　にも使う
 type Game struct {
 	gorm.Model
-	Odai string //お題
+	Odai    string //お題
+	Kaitous []Kaitou
 }
 
 // Line : Line bot を友達追加したユーザー・招待したグループを保存

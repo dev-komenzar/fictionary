@@ -62,6 +62,7 @@ func GetGame(id int) data.Game {
 	return game
 }
 
+//GetKaitou : 回答 ID で回答を取り出す
 func GetKaitou(id int) data.Kaitou {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
@@ -76,7 +77,7 @@ func GetKaitou(id int) data.Kaitou {
 }
 
 //GetKaitous : DBから[]Kaitouを取り出す
-func GetKaitous(id int) []data.Kaitou {
+func GetKaitous(g data.Game) []data.Kaitou {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -85,7 +86,8 @@ func GetKaitous(id int) []data.Kaitou {
 	defer db.Close()
 
 	var kaitous []data.Kaitou
-	db.Where("game_id = ?", id).Find(&kaitous)
+	// db.Where("game_id = ?", id).Find(&kaitous)
+	db.Model(&g).Association("Kaitous").Find(&kaitous)
 	return kaitous
 }
 
@@ -118,7 +120,7 @@ func GetVotes(b data.Kaitou) []data.Vote {
 }
 
 //InsertKaitou : DBに新しいkaitouを追加
-func InsertKaitou(kaitou data.Kaitou) {
+func InsertKaitou(g data.Game, k data.Kaitou) {
 	connect := ArgInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -126,7 +128,8 @@ func InsertKaitou(kaitou data.Kaitou) {
 	}
 	defer db.Close()
 
-	db.Create(&kaitou)
+	db.Model(&g).Association("Kaitous").Append(&k)
+	// db.Create(&kaitou)
 }
 
 //UpdateKaitous は解答リストをupdate する
@@ -184,6 +187,6 @@ func VoteTo(k data.Kaitou, v data.Vote) {
 	}
 	defer db.Close()
 
-	db.First(&k)
+	db.First(&k) //これ必要？？？？？
 	db.Model(&k).Association("Votes").Append(&v)
 }

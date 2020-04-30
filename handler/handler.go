@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -49,6 +50,13 @@ func lineInit(id string, typeOfSource string) data.Line {
 	return newLine
 }
 
+func isNill(id string) error {
+	if id == "" {
+		return errors.New("ERROR : Cannnot get game ID")
+	}
+	return nil
+}
+
 //LineConnect : LINE bot 接続
 func LineConnect() *linebot.Client {
 	channelSecret := getEnv("CHANNEL_SECRET", "")
@@ -77,18 +85,6 @@ func TwitterConnect() *twitter.Client {
 	// Twitter client
 	client := twitter.NewClient(httpClient)
 	return client
-}
-
-func makeAns(name string, ans string, id uint) data.Kaitou {
-	var kaitou data.Kaitou
-	kaitou.User = name
-	kaitou.Answer = ans
-	kaitou.GameID = id
-	var now = time.Now()
-	kaitou.CreatedAt = now
-	kaitou.UpdatedAt = now
-
-	return kaitou
 }
 
 func shuffle(a []data.Kaitou) {
@@ -120,10 +116,20 @@ func Index(c *gin.Context) {
 	c.HTML(200, "index.html", gin.H{"History": h})
 }
 
+//Error : エラーページ取得
+func Error(c *gin.Context) {
+	c.HTML(200, "error.html", gin.H{})
+}
+
 //GetKaitou は回答フォームを取得する
 func GetKaitou(c *gin.Context) {
 	//idをint型に変換
 	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
 		panic(err)
@@ -137,54 +143,106 @@ func GetKaitou(c *gin.Context) {
 //CreateKaitou は回答を作る
 func CreateKaitou(c *gin.Context) {
 	//idをuint型に変換
-	n := c.Param("id")
-	id, err := strconv.Atoi(n)
+	a := c.Param("id")
+	err := isNill(a)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
+	id, err := strconv.Atoi(a)
 	if err != nil {
 		panic(err)
 	}
-	iduint := uint(id)
+	b := uint(id)
+	g := db.GetGame(id)
 
-	name := c.PostForm("name")
-	ans := c.PostForm("answer")
+	h := c.PostForm("name")
+	d := c.PostForm("answer")
 
-	kaitou := makeAns(name, ans, iduint)
+	e := data.Kaitou{User: h, Answer: d, GameID: b}
 	//INSERT
-	db.InsertKaitou(kaitou)
+	db.InsertKaitou(g, e)
 
-	a := db.GetKaitous(id)
-	shuffle(a)
-	db.UpdateKaitous(a)
+	f := db.GetKaitous(g)
+	shuffle(f)
+	db.UpdateKaitous(f)
 
-	uri := "/games/" + n + "/accepted"
+	uri := "/games/" + a + "/accepted"
 	c.Redirect(302, uri)
+
 }
 
 //CreateVote は１つ投票を insert して、 Kaitou に紐づける
 func CreateVote(c *gin.Context) {
+	//使用してる変数：a, b, d, e, f, g, h, j, k,
 	//idを取得
-	n := c.Param("id")
-
-	kaiIDstring := c.PostForm("slct")
-	kID, err := strconv.Atoi(kaiIDstring)
+	a := c.Param("id")
+	err := isNill(a)
 	if err != nil {
 		log.Fatal(err)
+		c.Redirect(302, "/error")
 	}
-	k := db.GetKaitou(kID)
 
-	who := c.PostForm("playerName")
-	v := data.Vote{CreatedBy: who, KaitouID: kID}
-	v.CreatedBy = who
+	uri := "/games/" + a
 
-	db.VoteTo(k, v) //Kaitou に Vote を紐つける
+	l, err := strconv.Atoi(a)
 
-	uri := "/games/" + n
+	b := c.PostForm("slct")
+	err = isNill(b)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
+
+	d, err := strconv.Atoi(b)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
+	g := db.GetKaitou(d)
+
+	e := c.PostForm("playerName")
+	// playerName が重複していないかチェック
+	//ゲームの全ての Vote を取得
+	h := db.GetGame(l)
+	j := db.GetKaitous(h)
+	var k []data.Vote
+	for i := range j {
+		k = append(k, db.GetVotes(j[i])...)
+	}
+	//重複がないかチェック
+	if contains(e, k) {
+		c.Redirect(302, uri)
+		return
+	}
+
+	f := data.Vote{CreatedBy: e, KaitouID: d}
+	f.CreatedBy = e
+
+	db.VoteTo(g, f) //Kaitou に Vote を紐つける
+
 	c.Redirect(302, uri)
+
+}
+
+func contains(a string, v []data.Vote) bool {
+	for i := range v {
+		if a == v[i].CreatedBy {
+			return true
+		}
+	}
+	return false
 }
 
 //GetAccepted はAcceptedページを取得
 func GetAccepted(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
 		panic(err)
@@ -200,14 +258,18 @@ func GetAccepted(c *gin.Context) {
 func GetList(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, "/error")
+	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	game := db.GetGame(id)
-
-	a := db.GetKaitous(id) //回答一覧を取得
+	a := db.GetKaitous(game) //回答一覧を取得
 	//has many relation を取得
 	for i := range a {
 		a[i].Votes = db.GetVotes(a[i])

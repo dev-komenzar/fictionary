@@ -10,25 +10,28 @@
     <!-- BootstrapのCSS読み込み -->
     <link href="/css/bootstrap.min.css" rel="stylesheet" />
     <!-- web font を読み込む -->
-    <link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap"
+      rel="stylesheet"
+    />
     <!-- jQuery読み込み -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <!-- BootstrapのJS読み込み -->
     <script src="/js/bootstrap.min.js"></script>
     <!--自作CSS -->
-	<style type="text/css">
-		<!--
-		/*ここに調整CSS記述*/
-		body{
-			font-family: 'Sawarabi Mincho', sans-serif, -apple-system;
-		}
-		.jumbotron-fluid {
-			background: url(/resources/index2-resized.jpeg) center no-repeat;
-			background-size: cover;
-		}
+    <style type="text/css">
+      <!--
+      /*ここに調整CSS記述*/
+      body{
+      	font-family: 'Sawarabi Mincho', sans-serif, -apple-system;
+      }
+      .jumbotron-fluid {
+      	background: url(/resources/index2-resized.jpeg) center no-repeat;
+      	background-size: cover;
+      }
 
-		-->
-	</style>
+      -->
+    </style>
   </head>
 
   <body>
@@ -40,7 +43,12 @@
       <div class="contents">
         <h2>お題は「{{.odai}}」です。</h2>
         <p>あなたの知っている意味を書いてください。</p>
-        <form action="{{.uri}}" method="POST">
+        <form
+          action="{{.uri}}"
+          method="POST"
+          class="needs-validation"
+          novalidate
+        >
           <div class="form-group">
             <label for="name">回答者の名前（お好きな名前で）</label>
             <input
@@ -49,7 +57,11 @@
               id="name"
               name="name"
               placeholder="たほいやーネーム"
+              required
             />
+            <div class="invalid-feedback">
+              たほいやーネームを入力してください
+            </div>
           </div>
           <div class="form-group">
             <label for="answer">「{{.odai}}」の意味は？</label>
@@ -59,12 +71,46 @@
               rows="8"
               cols="80"
               class="form-control"
+              required
             ></textarea>
+            <div class="invalid-feedback">回答してください</div>
           </div>
           <button type="submit" class="btn btn-primary">提出する！</button>
         </form>
         <div>回答に招待するには、このページのURLを送ってあげてください。</div>
       </div>
     </div>
+
+    <script>
+      // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+      (function () {
+        "use strict";
+
+        window.addEventListener(
+          "load",
+          function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ
+            var validation = Array.prototype.filter.call(forms, function (
+              form
+            ) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add("was-validated");
+                },
+                false
+              );
+            });
+          },
+          false
+        );
+      })();
+    </script>
   </body>
 </html>

@@ -132,7 +132,7 @@
         <div class="input-group col-md-5">
           
           <select class="custom-select" id="slct" name="slct" required>
-            <option value="">本当の答えは？</option>
+            <option value="" selected>本当の答えは？</option>
             {{range $i, $a := .kaitous}}
             <option value="{{.ID}}">{{$i}}番</option>
             {{end}}
