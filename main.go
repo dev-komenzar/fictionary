@@ -41,6 +41,9 @@ func main() {
 	//LINE bot からのwebhookを受ける
 	router.POST("/line", handler.CreateLine(bot))
 
+	// エラーページ
+	router.GET("/error", handler.Error)
+
 	//起動
 	router.Run()
 }
