@@ -17,8 +17,7 @@ func getEnv(key, fallback string) string {
 	return fallback
 }
 
-//ArgInit はOpenの引数を作る
-func ArgInit() string {
+func argInit() string {
 	host := getEnv("FICTIONARY_DATABASE_HOST", "127.0.0.1")
 	port := getEnv("FICTIONARY_PORT", "5432")
 	user := getEnv("FICTIONARY_USER", "tahoiya")
@@ -39,7 +38,7 @@ func ArgInit() string {
 
 //Init : DB初期化
 func Init() {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic(err)
@@ -48,9 +47,22 @@ func Init() {
 	defer db.Close()
 }
 
+func GetAllLines() []data.Line {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	var ls []data.Line
+	db.Find(&ls)
+	return ls
+}
+
 //GetGame : DBから一つ取り出す：回答ページで使用
 func GetGame(id int) data.Game {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -64,7 +76,7 @@ func GetGame(id int) data.Game {
 
 //GetKaitou : 回答 ID で回答を取り出す
 func GetKaitou(id int) data.Kaitou {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(InsertLine)")
@@ -78,7 +90,7 @@ func GetKaitou(id int) data.Kaitou {
 
 //GetKaitous : DBから[]Kaitouを取り出す
 func GetKaitous(g data.Game) []data.Kaitou {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -93,7 +105,7 @@ func GetKaitous(g data.Game) []data.Kaitou {
 
 //GetGames はDBからゲーム一覧を取得
 func GetGames() []data.Game {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -107,7 +119,7 @@ func GetGames() []data.Game {
 
 //GetVotes はひとつのKaitou に対する Votes を取得
 func GetVotes(b data.Kaitou) []data.Vote {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -121,7 +133,7 @@ func GetVotes(b data.Kaitou) []data.Vote {
 
 //InsertKaitou : DBに新しいkaitouを追加
 func InsertKaitou(g data.Game, k data.Kaitou) {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -132,9 +144,20 @@ func InsertKaitou(g data.Game, k data.Kaitou) {
 	// db.Create(&kaitou)
 }
 
+func InsertGame(g data.Game) {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	db.Create(&g)
+}
+
 //UpdateKaitous は解答リストをupdate する
 func UpdateKaitous(ks []data.Kaitou) {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(dbInsert)")
@@ -153,9 +176,21 @@ func UpdateKaitous(ks []data.Kaitou) {
 	wg.Wait()
 }
 
+//UpdateGame は
+func UpdateGame(g data.Game) {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	db.Save(&g)
+}
+
 //InsertLine : DBに新しいlineを追加
 func InsertLine(line data.Line) {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(InsertLine)")
@@ -167,7 +202,7 @@ func InsertLine(line data.Line) {
 
 //DeleteLine はDBから該当するlineを削除。「退出」「アンフォロー」で使用
 func DeleteLine(line data.Line) {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(InsertLine)")
@@ -180,7 +215,7 @@ func DeleteLine(line data.Line) {
 
 //VoteTo は Kaitou に Vote を紐付ける
 func VoteTo(k data.Kaitou, v data.Vote) {
-	connect := ArgInit()
+	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
 		panic("データベース開ず(InsertLine)")

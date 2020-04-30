@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>フィクショナリー</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- web font を読み込む -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap"
+      rel="stylesheet"
+    />
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="/js/bootstrap.min.js"></script>
+    <!--自作CSS -->
+    <style type="text/css">
+      <!--
+      /*ここに調整CSS記述*/
+      body{
+      	font-family: 'Sawarabi Mincho', sans-serif, -apple-system;
+      }
+      .jumbotron-fluid {
+      	background: url(/resources/index2-resized.jpeg) center no-repeat;
+      	background-size: cover;
+      }
+
+      -->
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+        <h1><a href="/">たほいや！</a></h1>
+      </header>
+
+      <div class="row">
+        <h2 class="mx-auto mt-3 rounded-lg bg-white p-3">
+          お題を入力してください
+        </h2>
+      </div>
+
+      <form
+        action="/new-game"
+        method="POST"
+        class="needs-validation"
+        novalidate
+      >
+        <div class="form-group">
+          <label for="creator-name">選者たほいやーネーム</label
+          ><input
+            type="text"
+            id="creator-name"
+            name="creator-name"
+            class="form-control"
+            required
+            placeholder="くまの寮太"
+          />
+          <div class="invalid-feedback">
+            たほいやーネームを入力してください
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="odai">お題</label>
+          <input
+            type="text"
+            id="odai"
+            name="odai"
+            class="form-control"
+            required
+            placeholder="たほいや"
+          />
+          <div class="invalid-feedback">お題を入力してください</div>
+        </div>
+
+        <div class="form-group">
+          <label for="dict">広辞苑によると... </label>
+          <textarea
+            id="dict"
+            name="dict"
+            class="form-control"
+            rows="8"
+            cols="80"
+            required
+            placeholder="たほい-や【たほい屋】静岡県で、山畑の猪追い小屋をいう。"
+          ></textarea>
+          <div class="invalid-feedback">正解を入力してください</div>
+        </div>
+
+        <div class="form-group">
+          <label for="secret">合言葉を決めてください</label>
+          <input
+            type="text"
+            id="secret"
+            name="secret"
+            class="form-control"
+            required
+            placeholder="はないちもんめ"
+          />
+          <small>事前にみんなの回答を確認する時や、回答を締め切る時などに必要となります</small>
+          <div class="invalid-feedback">入力してくださいよ</div>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="checkLine"
+            id="check-line"
+            disabled
+          />
+          <label class="form-check-label">LINEに送信（無効）</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input
+            type="checkbox"
+            class="form-check-input"
+            name="checkTwitter"
+            id="check-twitter"
+            disabled
+          />
+          <label class="form-check-label">twitterに送信（無効）</label>
+        </div>
+
+        <input class="btn btn-primary" type="submit" value="出題" />
+      </form>
+    </div>
+
+    <script>
+      // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+      (function () {
+        "use strict";
+
+        window.addEventListener(
+          "load",
+          function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ
+            var validation = Array.prototype.filter.call(forms, function (
+              form
+            ) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add("was-validated");
+                },
+                false
+              );
+            });
+          },
+          false
+        );
+      })();
+    </script>
+  </body>
+</html>

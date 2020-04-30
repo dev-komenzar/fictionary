@@ -1,65 +1,166 @@
 <!DOCTYPE html>
 <html lang="ja">
-<!--○出題->集める->一覧表示->投票->回答者open->閲覧-->
-<head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>フィクショナリー</title>
-	<!-- BootstrapのCSS読み込み -->
-	<link href="/css/bootstrap.min.css" rel="stylesheet">
-	<!-- web font を読み込む -->
-	<link href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap" rel="stylesheet">
-	<!-- jQuery読み込み -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<!-- BootstrapのJS読み込み -->
-	<script src="/js/bootstrap.min.js"></script>
-	<!--自作CSS -->
-	<style type="text/css">
-		<!--
-		/*ここに調整CSS記述*/
-		body{
-			font-family: 'Sawarabi Mincho', sans-serif, -apple-system;
-		}
-		.jumbotron-fluid {
-			background: url(/resources/index2-resized.jpeg) center no-repeat;
-			background-size: cover;
-		}
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>フィクショナリー</title>
+    <!-- BootstrapのCSS読み込み -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- web font を読み込む -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sawarabi+Mincho&display=swap"
+      rel="stylesheet"
+    />
+    <!-- jQuery読み込み -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- BootstrapのJS読み込み -->
+    <script src="/js/bootstrap.min.js"></script>
+    <!--自作CSS -->
+    <style type="text/css">
+      <!--
+      /*ここに調整CSS記述*/
+      body{
+      	font-family: 'Sawarabi Mincho', sans-serif, -apple-system;
+      }
+      .jumbotron-fluid {
+      	background: url(/resources/index2-resized.jpeg) center no-repeat;
+      	background-size: cover;
+      }
 
-		-->
-	</style>
-</head>
+      -->
+    </style>
+  </head>
 
-<body>
-	<div>
-		<!--　▼ ジャンボトロン　 -->
-		<div class="jumbotron jumbotron-fluid" style="height: 500px;">
-			<div class="container mx-auto" style="width: 90%;">
-				<h1 class="ml-0"><a href="/">たほいや！</a></h1>
+  <body>
+    <div>
+      <!--　▼ ジャンボトロン　 -->
+      <div class="jumbotron jumbotron-fluid" style="height: 500px;">
+        <div class="container" style="width: 90%;">
+          <div
+            class="card bg-transparent mx-auto my-5 border-0"
+            style="width: 18rem;"
+          >
+            <div class="card-body">
+              <h1 class="card-title text-white">たほい-や</h1>
+              <p class="card-text text-white">
+                【たほい屋】静岡県で、山畑の猪追い小屋をいう。
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--　▲ ジャンボトロン　 -->
+      <div class="container text-center">
+        <h2>回答受付しているお題</h2>
+        {{ range .Accepting }}
+        <a href=""></a>
+        /* モーダル */
+        <div
+          class="modal fade"
+          id="modal{{.ID}}"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modal{{.ID}}Label"
+        >
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="modal{{.ID}}Label">
+                  事前に回答を確認
+                </h5>
+                <button
+                  type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="閉じる"
+                >
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form
+                  action="/games/{{.ID}}/verify"
+                  method="POST"
+                  class="needs-validation"
+                  novalidate
+                >
+                  <div class="form-group">
+                    <label for="secret-{{.ID}}">合言葉を入力</label>
+                    <input
+                      type="text"
+                      id="secret-{{.ID}}"
+                      name="secret-{{.ID}}"
+                      class="form-control"
+                      required
+                      placeholder="はないちもんめ"
+                    />
+                    <div class="invalid-feedback">入力してくださいませ</div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                >
+                  閉じる
+                </button>
+                <button type="button" class="btn btn-primary">
+                  私は出題者です
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+		/* ここまでモーダル */
+        {{ end }}
 
-				<div class="text-center mb-4">
-					お題は？
-					<form method="post" action="/newGame">
-						<input type="text" name="odai"><br>
-						<div class="form-group form-check">
-							<input type="checkbox" class="form-check-input" name="checkLine">
-							<label class="form-check-label" for="checkLine">LINEに送信</label>
-							<input type="checkbox" class="form-check-input" name="checkTwitter">
-							<label class="form-check-label" for="checkTwitter">twitterに送信</label>
-						</div><br>
-						<input class="btn btn-primary mt-1" type="submit" value="出題">
-					</form>
-				</div>
-			</div>
-		</div>
-		<!--　▲ ジャンボトロン　 -->
-		<div class="container text-center">
-			<h2>これまでのお題</h2>
-			{{ range .History}}
-			<a href="/games/{{.ID}}">「{{.Odai}}」</a><br>
-			{{ end }}
-		</div>
-	</div>
-</body>
+        <h2>これまでのお題</h2>
+        {{ range .History}}
+        <a href="/games/{{.ID}}">「{{.Odai}}」</a><br />
+        {{ end }}
+      </div>
+    </div>
+    <footer class="footer bg-light mt-3">
+      <div class="container text-center py-3">
+        <p><a href="/new-game">出題する</a></p>
+        <p><a href="/">回答を締め切る</a></p>
+        <p><a href="/">ついったー【twitter】</a></p>
+      </div>
+    </footer>
 
+    <script>
+      // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+      (function () {
+        "use strict";
+
+        window.addEventListener(
+          "load",
+          function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ
+            var validation = Array.prototype.filter.call(forms, function (
+              form
+            ) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add("was-validated");
+                },
+                false
+              );
+            });
+          },
+          false
+        );
+      })();
+    </script>
+  </body>
 </html>
