@@ -117,6 +117,19 @@ func GetGames() []data.Game {
 	return games
 }
 
+func GetGamesPhaseIs(st string) []data.Game {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(dbInsert)")
+	}
+	defer db.Close()
+
+	var gs []data.Game
+	db.Where("phase = ?", st).Find(&gs)
+	return gs
+}
+
 //GetVotes はひとつのKaitou に対する Votes を取得
 func GetVotes(b data.Kaitou) []data.Vote {
 	connect := argInit()
@@ -144,7 +157,7 @@ func InsertKaitou(g data.Game, k data.Kaitou) {
 	// db.Create(&kaitou)
 }
 
-func InsertGame(g data.Game) {
+func InsertGame(g data.Game) data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -153,6 +166,9 @@ func InsertGame(g data.Game) {
 	defer db.Close()
 
 	db.Create(&g)
+	var gm data.Game
+	db.Last(&gm)
+	return gm
 }
 
 //UpdateKaitous は解答リストをupdate する
@@ -176,8 +192,8 @@ func UpdateKaitous(ks []data.Kaitou) {
 	wg.Wait()
 }
 
-//UpdateGame は
-func UpdateGame(g data.Game) {
+//UpdateGame は Game を丸ごと更新する
+func UpdateGame(g data.Game) data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -186,6 +202,8 @@ func UpdateGame(g data.Game) {
 	defer db.Close()
 
 	db.Save(&g)
+	db.First(&g, g.ID)
+	return g
 }
 
 //InsertLine : DBに新しいlineを追加

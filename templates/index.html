@@ -51,76 +51,108 @@
         </div>
       </div>
       <!--　▲ ジャンボトロン　 -->
+
       <div class="container text-center">
-        <h2>回答受付しているお題</h2>
-        {{ range .Accepting }}
-        <a href=""></a>
-        /* モーダル */
-        <div
-          class="modal fade"
-          id="modal{{.ID}}"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="modal{{.ID}}Label"
-        >
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title" id="modal{{.ID}}Label">
-                  事前に回答を確認
-                </h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="閉じる"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
-              <div class="modal-body">
-                <form
-                  action="/games/{{.ID}}/verify"
-                  method="POST"
-                  class="needs-validation"
-                  novalidate
-                >
-                  <div class="form-group">
-                    <label for="secret-{{.ID}}">合言葉を入力</label>
-                    <input
-                      type="text"
-                      id="secret-{{.ID}}"
-                      name="secret-{{.ID}}"
-                      class="form-control"
-                      required
-                      placeholder="はないちもんめ"
-                    />
-                    <div class="invalid-feedback">入力してくださいませ</div>
-                  </div>
-                </form>
-              </div>
-              <div class="modal-footer">
-                <button
-                  type="button"
-                  class="btn btn-secondary"
-                  data-dismiss="modal"
-                >
-                  閉じる
-                </button>
-                <button type="button" class="btn btn-primary">
-                  私は出題者です
-                </button>
-              </div>
-            </div>
+        <div class="card my-3">
+          <div class="card-body">
+            <h2 class="card-title">投票中のお題</h2>
+            <p class="card-text">
+              {{ if .playing }} {{ range .playing }}
+              <a href="/games/{{ .ID }}">「{{ .Odai }}」</a><br />
+              {{ end }} {{ else }} 今、投票中のお題はありません {{ end }}
+            </p>
           </div>
         </div>
-		/* ここまでモーダル */
-        {{ end }}
+        <div class="card my-3">
+          <div class="card-body">
+            <h2 class="card-title">回答受付しているお題</h2>
 
-        <h2>これまでのお題</h2>
-        {{ range .History}}
-        <a href="/games/{{.ID}}">「{{.Odai}}」</a><br />
-        {{ end }}
+            {{ if .accepting }} {{ range .accepting }}
+            <p class="card-text">
+            <a href="/games/{{ .ID }}/new">「{{ .Odai }}」</a>
+              <a href="#" data-toggle="modal" data-target="#modal{{ .ID }}" class="text-muted"
+                >（回答締め切りはこちら）</a
+              ><br />
+            </p>
+
+            <!--　モーダル　 -->
+            <div
+              class="modal fade"
+              id="modal{{ .ID }}"
+              tabindex="-1"
+              role="dialog"
+              aria-labelledby="modal{{.ID}}Label"
+            >
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="modal{{.ID}}Label">
+                      事前に回答を確認
+                    </h5>
+                    <button
+                      type="button"
+                      class="close"
+                      data-dismiss="modal"
+                      aria-label="閉じる"
+                    >
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+
+                  <div class="modal-body">
+                    <form
+                      action="/games/{{.ID}}/verify"
+                      method="POST"
+                      class="needs-validation"
+                      novalidate
+                    >
+                      <div class="form-group">
+                        <label for="secret-{{.ID}}">合言葉を入力</label>
+                        <input
+                          type="text"
+                          class="form-control"
+                          id="secret-{{.ID}}"
+                          name="secret-{{.ID}}"
+                          placeholder="はないちもんめ"
+                          required
+                        />
+                        <div class="invalid-feedback">入力してくださいませ</div>
+                      </div>
+                      <div class="row">
+                        <div class="col-1"></div>
+                        <button
+                          type="button"
+                          class="btn btn-secondary col-3"
+                          data-dismiss="modal"
+                        >
+                          閉じる
+                        </button>
+                        <div class="col-2"></div>
+                        <button type="submit" class="btn btn-primary col-5">
+                          私は出題者です
+                        </button>
+                        <div class="col-1"></div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!--　ここまでモーダル　 -->
+            {{ end }} {{ else }} 今、投票中のお題はありません {{ end }}
+          </div>
+        </div>
+
+        <div class="card my-3">
+          <div class="card-body">
+            <h2 class="card-title">これまでのお題</h2>
+            <p class="card-text">
+              {{ range .archive}}
+              <a href="/games/{{.ID}}">「{{.Odai}}」</a><br />
+              {{ end }}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
     <footer class="footer bg-light mt-3">

@@ -112,10 +112,12 @@
         </button>
       </div>
 
+      {{ if eq .phase "playing" }}
+
       <form
         action="{{.uri}}"
         method="POST"
-        class="row needs-validation mb-5"
+        class="row needs-validation mb-3"
         novalidate
       >
         <div class="input-group col-md-4">
@@ -148,6 +150,72 @@
           </button>
         </div>
       </form>
+
+      <div class="row mb-5">
+        <div class="col-5 mx-auto">
+          <!-- 切り替えボタンの設定 -->
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-toggle="modal"
+            data-target="#doneModal"
+          >
+            出題者は最後に押す
+          </button>
+
+          <!-- モーダルの設定 -->
+          <div
+            class="modal fade"
+            id="doneModal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="doneModalLabel"
+          >
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="doneModalLabel">
+                    ゲームを終わる
+                  </h5>
+                  <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal"
+                    aria-label="閉じる"
+                  >
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <p>
+                    ゲームを終了し、今後は閲覧だけできます。投票ができなくなります。
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <form action="{{.uri4archive}}" method="POST">
+                    <button
+                      type="button"
+                      class="btn btn-secondary"
+                      data-dismiss="modal"
+                    >
+                      閉じる
+                    </button>
+                    <button type="submit" class="btn btn-warning">
+                      ゲームを終わる
+                    </button>
+                  </form>
+                </div>
+                <!-- /.modal-footer -->
+              </div>
+              <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+          </div>
+          <!-- /.modal -->
+        </div>
+      </div>
+
+      {{ end }}
     </div>
 
     <script>

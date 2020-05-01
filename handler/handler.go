@@ -22,6 +22,14 @@ import (
 	"github.com/tuckKome/fictionary/db"
 )
 
+const (
+	accepting   = "accepting"
+	playing     = "playing"
+	archive     = "archive"
+	linkToError = "/error"
+	games       = "/games/"
+)
+
 func getEnv(key, fallback string) string {
 	if value, ok := os.LookupEnv(key); ok {
 		return value
@@ -44,6 +52,38 @@ func isNill(id string) error {
 		return errors.New("ERROR : Cannnot get game ID")
 	}
 	return nil
+}
+
+func shuffle(a []data.Kaitou) {
+	//[0,1,2,...,k-1]を用意
+	k := len(a)
+	arr := make([]int, k)
+	for i := 0; i < k; i++ {
+		arr[i] = i
+	}
+
+	//Fisher–Yates シャッフル
+	rand.Seed(time.Now().UnixNano())
+	for i := k - 1; i > 0; i-- {
+		j := rand.Intn(i + 1)
+		tmp := arr[i]
+		arr[i] = arr[j]
+		arr[j] = tmp
+	}
+
+	//シャッフルされたarr を[]Kaitou に入れる
+	for i := range a {
+		a[i].Base = arr[i]
+	}
+}
+
+func contains(a string, v []data.Vote) bool {
+	for i := range v {
+		if a == v[i].CreatedBy {
+			return true
+		}
+	}
+	return false
 }
 
 //LineConnect : LINE bot 接続
@@ -76,38 +116,98 @@ func TwitterConnect() *twitter.Client {
 	return client
 }
 
-func shuffle(a []data.Kaitou) {
-	//[0,1,2,...,k-1]を用意
-	k := len(a)
-	arr := make([]int, k)
-	for i := 0; i < k; i++ {
-		arr[i] = i
-	}
-
-	//Fisher–Yates シャッフル
-	rand.Seed(time.Now().UnixNano())
-	for i := k - 1; i > 0; i-- {
-		j := rand.Intn(i + 1)
-		tmp := arr[i]
-		arr[i] = arr[j]
-		arr[j] = tmp
-	}
-
-	//シャッフルされたarr を[]Kaitou に入れる
-	for i := range a {
-		a[i].Base = arr[i]
-	}
-}
-
 //Index ははじめのページを取得
 func Index(c *gin.Context) {
-	var h = db.GetGames()
-	c.HTML(200, "index.html", gin.H{"History": h})
+	acpGames := db.GetGamesPhaseIs(accepting)
+	plyGames := db.GetGamesPhaseIs(playing)
+	arcGames := db.GetGamesPhaseIs(archive)
+
+	c.HTML(200, "index.html", gin.H{
+		"playing":   plyGames,
+		"accepting": acpGames,
+		"archive":   arcGames,
+	})
 }
 
 //Error : エラーページ取得
 func Error(c *gin.Context) {
 	c.HTML(200, "error.html", gin.H{})
+}
+
+//Switch1 新しい回答を書けるか判定
+func Switch1(c *gin.Context) {
+	//idをint型に変換
+	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+	}
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
+	}
+
+	game := db.GetGame(id)
+
+	switch game.Phase {
+	case accepting:
+		GetKaitou(c)
+	default:
+		c.Redirect(302, linkToError)
+	}
+}
+
+//Switch2 「みんなの回答」ページを見れるか判定
+func Switch2(c *gin.Context) {
+	//idをint型に変換
+	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+	}
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
+	}
+	game := db.GetGame(id)
+
+	switch game.Phase {
+	case playing, archive:
+		GetList(c)
+	default:
+		c.Redirect(302, linkToError)
+	}
+}
+
+//Switch3 投票をリジェクト or パス
+func Switch3(c *gin.Context) {
+	//idをint型に変換
+	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+	}
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
+	}
+	game := db.GetGame(id)
+
+	switch game.Phase {
+	case playing:
+		CreateVote(c)
+	default:
+		c.Redirect(302, linkToError)
+	}
 }
 
 //GetNewGame 新しいゲームを作るページを取得
@@ -122,15 +222,17 @@ func GetKaitou(c *gin.Context) {
 	err := isNill(n)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
 	}
 
 	game := db.GetGame(id)
-	uri := "/games/" + n + "/new"
+	uri := games + n + "/new"
 	c.HTML(200, "phase21.html", gin.H{"odai": game.Odai, "uri": uri})
 }
 
@@ -141,20 +243,22 @@ func GetAccepted(c *gin.Context) {
 	err := isNill(n)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
+		return
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
 	}
 
 	game := db.GetGame(id)
-	uri := "/games/" + n
-	uri2 := "/games/" + n + "/new"
-	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri, "uri2": uri2})
+	uri := games + n + "/new"
+	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri})
 }
 
-func GetVerify(c *gin.Context) {
+func Verify(c *gin.Context) {
 	//idを取得
 	k := c.Param("id")
 	n := "secret-" + k
@@ -162,37 +266,41 @@ func GetVerify(c *gin.Context) {
 	err := isNill(k)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(k)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
 	}
 
 	//Game を取得
 	l := db.GetGame(id)
 	//合言葉は正しい？
 	if l.Secret != m {
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
+		return
 	}
 
-	uri := "/games/" + k + "/check-in-adv"
+	uri := games + k + "/check-in-adv"
 	c.Redirect(302, uri)
 }
 
 //GetListInAdv は出題者が事前確認するページ
-
 func GetListInAdv(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
 	}
 
 	game := db.GetGame(id)
@@ -203,7 +311,7 @@ func GetListInAdv(c *gin.Context) {
 
 	k := len(a) //coutOfUsers のため
 
-	uri := "/games/" + n + "/to-playing" //uri のため
+	uri := games + n + "/to-playing" //uri のため
 
 	c.HTML(200, "check-in-adv.html", gin.H{
 		"odai":         game.Odai,
@@ -221,7 +329,7 @@ func GetList(c *gin.Context) {
 	err := isNill(n)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
@@ -240,7 +348,8 @@ func GetList(c *gin.Context) {
 
 	k := len(a) //coutOfUsers のため
 
-	uri := "/games/" + n //uri のため
+	uri := games + n //uri のため
+	uri4archive := games + n + "/done"
 
 	c.HTML(200, "phase3.html", gin.H{
 		"odai":         game.Odai,
@@ -248,6 +357,8 @@ func GetList(c *gin.Context) {
 		"countOfUsers": k,
 		"kaitous":      a,
 		"uri":          uri,
+		"uri4archive":  uri4archive,
+		"phase":        game.Phase,
 	})
 }
 
@@ -269,12 +380,17 @@ func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerF
 		twitterUse := c.PostForm("check-twitter")
 		n := c.PostForm("creator-name")
 		s := c.PostForm("secret")
-		g := data.Game{Odai: t, Phase: "accepting", CreatedBy: n, Secret: s}
+		d := c.PostForm("dict")
 
-		db.InsertGame(g)
+		g := data.Game{Odai: t, Phase: accepting, CreatedBy: n, Secret: s}
+		g = db.InsertGame(g)
 
-		id := strconv.Itoa(int(g.ID))
-		uri := "/games/" + id + "/new"
+		//正解を登録
+		k := data.Kaitou{User: n + "（正解）", Answer: d, GameID: g.ID}
+		db.InsertKaitou(g, k)
+
+		id := strconv.Itoa(int(g.ID)) // ?? ここのIDって ??
+		uri := games + id + "/new"
 
 		//LINE bot・twitterに投げる
 		if getEnv("GIN_MODE", "debug") == "release" {
@@ -300,7 +416,8 @@ func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerF
 			}
 		}
 
-		c.Redirect(302, uri)
+		u := games + id + "/accepted"
+		c.Redirect(302, u)
 	}
 }
 
@@ -349,11 +466,13 @@ func CreateKaitou(c *gin.Context) {
 	err := isNill(a)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(a)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+		return
 	}
 	b := uint(id)
 	g := db.GetGame(id)
@@ -365,13 +484,8 @@ func CreateKaitou(c *gin.Context) {
 	//INSERT
 	db.InsertKaitou(g, e)
 
-	f := db.GetKaitous(g)
-	shuffle(f)
-	db.UpdateKaitous(f)
-
-	uri := "/games/" + a + "/accepted"
+	uri := games + a + "/accepted"
 	c.Redirect(302, uri)
-
 }
 
 //CreateVote は１つ投票を insert して、 Kaitou に紐づける
@@ -382,28 +496,28 @@ func CreateVote(c *gin.Context) {
 	err := isNill(a)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 
-	uri := "/games/" + a
+	uri := games + a
 
 	l, err := strconv.Atoi(a)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 
 	b := c.PostForm("slct")
 	err = isNill(b)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 
 	d, err := strconv.Atoi(b)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 	g := db.GetKaitou(d)
 
@@ -438,29 +552,48 @@ func UpdatePhaseToPlaying(c *gin.Context) {
 	err := isNill(k)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 
-	uri := "/games/" + k
+	uri := games + k
 
 	l, err := strconv.Atoi(k)
 	if err != nil {
 		log.Fatal(err)
-		c.Redirect(302, "/error")
+		c.Redirect(302, linkToError)
 	}
 
 	m := db.GetGame(l)
-	m.Phase = "playing"
-	db.UpdateGame(m)
+	m.Phase = playing
+	m = db.UpdateGame(m)
+
+	//シャッフル
+	n := db.GetKaitous(m)
+	shuffle(n)
+	db.UpdateKaitous(n)
 
 	c.Redirect(302, uri)
 }
 
-func contains(a string, v []data.Vote) bool {
-	for i := range v {
-		if a == v[i].CreatedBy {
-			return true
-		}
+//UpdatePhaseToArchive は Game の Phase を archive に変更する
+func UpdatePhaseToArchive(c *gin.Context) {
+	//idをuint型に変換
+	a := c.Param("id")
+	err := isNill(a)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
 	}
-	return false
+	id, err := strconv.Atoi(a)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+	}
+
+	g := db.GetGame(id)
+	g.Phase = archive
+	db.UpdateGame(g)
+
+	uri := games + a
+	c.Redirect(302, uri)
 }
