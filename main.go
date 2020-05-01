@@ -27,7 +27,7 @@ func main() {
 
 	router.POST("/new-game", handler.CreateGame(bot, twitterClient))
 
-	router.GET("/games/:id/new", handler.GetKaitou)
+	router.GET("/games/:id/new", handler.Switch1)
 
 	router.POST("/games/:id/new", handler.CreateKaitou)
 
@@ -35,7 +35,7 @@ func main() {
 	router.GET("/games/:id/accepted", handler.GetAccepted)
 
 	//事前確認のための合言葉検証
-	router.POST("/games/:id/verify", handler.GetVerify)
+	router.POST("/games/:id/verify", handler.Verify)
 
 	//事前チェックページ
 	router.GET("/games/:id/check-in-adv", handler.GetListInAdv)
@@ -44,10 +44,13 @@ func main() {
 	router.POST("/games/:id/to-playing", handler.UpdatePhaseToPlaying)
 
 	//「みんなの回答」ページを表示
-	router.GET("/games/:id", handler.GetList)
+	router.GET("/games/:id", handler.Switch2)
 
 	//「投票」機能
-	router.POST("/games/:id", handler.CreateVote)
+	router.POST("/games/:id", handler.Switch3)
+
+	//ゲームを閉じる
+	router.POST("/games/:id/done", handler.UpdatePhaseToArchive)
 
 	//LINE bot からのwebhookを受ける
 	router.POST("/line", handler.CreateLine(bot))
