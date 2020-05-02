@@ -69,9 +69,14 @@
 
             {{ if .accepting }} {{ range .accepting }}
             <p class="card-text">
-            <a href="/games/{{ .ID }}/new">「{{ .Odai }}」</a>
-              <a href="#" data-toggle="modal" data-target="#modal{{ .ID }}" class="text-muted"
-                >（回答締め切りはこちら）</a
+              <a href="/games/{{ .ID }}/new">「{{ .Odai }}」 </a>
+              <span class="badge badge-pill badge-primary">{{ .CountK }}</span>
+              <a
+                href="#"
+                data-toggle="modal"
+                data-target="#modal{{ .ID }}"
+                class="text-muted"
+                >（回答確認はこちら）</a
               ><br />
             </p>
 
@@ -139,7 +144,7 @@
               </div>
             </div>
             <!--　ここまでモーダル　 -->
-            {{ end }} {{ else }} 今、投票中のお題はありません {{ end }}
+            {{ end }} {{ else }} 今、回答募集中のお題はありません {{ end }}
           </div>
         </div>
 

@@ -118,13 +118,26 @@ func TwitterConnect() *twitter.Client {
 
 //Index ははじめのページを取得
 func Index(c *gin.Context) {
+	type Counter struct {
+		data.Game
+		CountK int
+	}
 	acpGames := db.GetGamesPhaseIs(accepting)
 	plyGames := db.GetGamesPhaseIs(playing)
 	arcGames := db.GetGamesPhaseIs(archive)
 
+	m := len(acpGames)
+	l := make([]Counter, m)
+
+	for i := range acpGames {
+		l[i].Game = acpGames[i]
+		k := db.GetKaitous(acpGames[i])
+		l[i].CountK = len(k)
+	}
+
 	c.HTML(200, "index.html", gin.H{
 		"playing":   plyGames,
-		"accepting": acpGames,
+		"accepting": l,
 		"archive":   arcGames,
 	})
 }
