@@ -191,8 +191,10 @@ func Switch2(c *gin.Context) {
 	game := db.GetGame(id)
 
 	switch game.Phase {
-	case playing, archive:
-		GetList(c)
+	case playing:
+		getListVoting(c)
+	case archive:
+		getListArchive(c)
 	default:
 		c.Redirect(302, linkToError)
 	}
@@ -271,6 +273,7 @@ func GetAccepted(c *gin.Context) {
 	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri})
 }
 
+//Verufy 合言葉があっているか
 func Verify(c *gin.Context) {
 	//idを取得
 	k := c.Param("id")
@@ -335,8 +338,7 @@ func GetListInAdv(c *gin.Context) {
 	})
 }
 
-//GetList は回答一覧を取得
-func GetList(c *gin.Context) {
+func getListVoting(c *gin.Context) {
 	//idを取得
 	n := c.Param("id")
 	err := isNill(n)
@@ -364,13 +366,50 @@ func GetList(c *gin.Context) {
 	uri := games + n //uri のため
 	uri4archive := games + n + "/done"
 
-	c.HTML(200, "phase3.html", gin.H{
+	c.HTML(200, "voting.html", gin.H{
 		"odai":         game.Odai,
 		"who":          game.CreatedBy,
 		"countOfUsers": k,
 		"kaitous":      a,
 		"uri":          uri,
 		"uri4archive":  uri4archive,
+		"phase":        game.Phase,
+	})
+}
+
+func getListArchive(c *gin.Context) {
+	//idを取得
+	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Fatal(err)
+		c.Redirect(302, linkToError)
+	}
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	game := db.GetGame(id)
+	a := db.GetKaitous(game) //回答一覧を取得
+	//has many relation を取得
+	for i := range a {
+		a[i].Votes = db.GetVotes(a[i])
+	}
+
+	//Kaitou.Base　で並び替える
+	sort.SliceStable(a, func(i, j int) bool { return a[i].Base < a[j].Base })
+
+	k := len(a) //coutOfUsers のため
+
+	uri := games + n //uri のため
+
+	c.HTML(200, "archive.html", gin.H{
+		"odai":         game.Odai,
+		"who":          game.CreatedBy,
+		"countOfUsers": k,
+		"kaitous":      a,
+		"uri":          uri,
 		"phase":        game.Phase,
 	})
 }
