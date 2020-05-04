@@ -55,7 +55,7 @@
       <div class="container text-center">
         <div class="card my-3">
           <div class="card-body">
-            <h2 class="card-title">投票中のお題</h2>
+            <h2 class="card-title">吟味しているお題</h2>
             <p class="card-text">
               {{ if .playing }} {{ range .playing }}
               <a href="/games/{{ .ID }}">「{{ .Odai }}」</a><br />
@@ -163,7 +163,7 @@
     <footer class="footer bg-light mt-3">
       <div class="container text-center py-3">
         <p><a href="/new-game">出題する</a></p>
-        <p><a href="/">回答を締め切る</a></p>
+        <p class="text-muted"><a href="/">回答を締め切る（未実装）</a></p>
         <p><a href="/">ついったー【twitter】</a></p>
       </div>
     </footer>
