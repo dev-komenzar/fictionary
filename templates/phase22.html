@@ -3,10 +3,10 @@
   {{ template "head" }}
 
   <body class="d-flex flex-column h-100">
+    {{ template "header" }}
     <div class="container">
-      {{ template "header" }}
       <div class="contents">
-        <h2>回答を受け付けました！</h2>
+        <h2 class="mt-3">回答を受け付けました！</h2>
       </div>
       <div>
         <a href="{{.uri}}">別の回答を作る</a>
