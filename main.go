@@ -61,6 +61,12 @@ func main() {
 	//Donation Page
 	router.GET("/donate", handler.GetDonation)
 
+	//Donation するページ
+	router.GET("/i-will-donate", handler.GetMakeDonation)
+
+	//Donation 作成
+	router.POST("/i-will-donate", handler.CreateDonation)
+
 	//起動
 	router.Run()
 }
