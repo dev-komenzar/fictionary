@@ -184,6 +184,17 @@ func InsertGame(g data.Game) data.Game {
 	return gm
 }
 
+func InsertDonation(d data.Donation) {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(db.InsertDonation)")
+	}
+	defer db.Close()
+
+	db.Create(&d)
+}
+
 //UpdateKaitous は解答リストをupdate する
 func UpdateKaitous(ks []data.Kaitou) {
 	connect := argInit()
