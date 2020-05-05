@@ -280,8 +280,6 @@ func GetDonation(c *gin.Context) {
 		a = a + d[i].HowMuch
 	}
 
-	b := a / 100
-
 	c.HTML(200, "donate.html", gin.H{
 		"donation": d,
 		"total":    a,
