@@ -273,6 +273,13 @@ func GetAccepted(c *gin.Context) {
 	c.HTML(200, "phase22.html", gin.H{"odai": game.Odai, "uri": uri})
 }
 
+func GetDonation(c *gin.Context) {
+	d := db.GetAllDonation()
+	c.HTML(200, "donate.html", gin.H{
+		"donation": d,
+	})
+}
+
 //Verufy 合言葉があっているか
 func Verify(c *gin.Context) {
 	//idを取得
