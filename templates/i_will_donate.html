@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-100">
+  {{ template "head" }}
+
+  <body class="d-flex flex-column h-100">
+    {{ template "header" }}
+
+    <div class="container">
+      <div class="row">
+        <h2 class="mx-auto mt-3 rounded-lg bg-white p-3">
+          カンパありがとう！
+        </h2>
+      </div>
+
+      <form
+        action="/i-will-donate"
+        method="POST"
+        class="needs-validation"
+        novalidate
+      >
+        <div class="form-group">
+          <label for="donater-name">お名前</label
+          ><input
+            type="text"
+            id="donater-name"
+            name="donater-name"
+            class="form-control"
+            required
+            placeholder="くまの寮太"
+          />
+          <div class="invalid-feedback">
+            お名前を入力してください
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="donation-amount">金額（単位：JPY）</label>
+          <input
+            type="number"
+            id="donation-amount"
+            name="donation-amount"
+            class="form-control"
+            required
+            placeholder="500"
+          />
+          <div class="invalid-feedback">数字だけを入力してください</div>
+        </div>
+
+        <div class="custom-control custom-radio">
+          <input
+            type="radio"
+            id="radio1"
+            class="custom-control-input"
+            name="how-to-pay"
+            value="paypay"
+          /><label for="radio1" class="custom-control-label">PayPay</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input
+            type="radio"
+            id="radio2"
+            class="custom-control-input"
+            name="how-to-pay"
+            value="pring"
+          /><label for="radio2" class="custom-control-label">pring</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input
+            type="radio"
+            id="radio3"
+            class="custom-control-input"
+            name="how-to-pay"
+            value="line"
+          /><label for="radio3" class="custom-control-label">LINE Pay</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input
+            type="radio"
+            id="radio4"
+            class="custom-control-input"
+            name="how-to-pay"
+            value="cash"
+          /><label for="radio4" class="custom-control-label">現金</label>
+        </div>
+        <div class="custom-control custom-radio">
+          <input
+            type="radio"
+            id="radio5"
+            class="custom-control-input"
+            name="how-to-pay"
+            value="undecided"
+          /><label for="radio5" class="custom-control-label">未定</label>
+        </div>
+
+        <input class="btn btn-primary mt-3" type="submit" value="カンパ" />
+      </form>
+
+      <div class="my-3">
+        <small>目標達成してから、こめたにが個別に連絡いたします</small>
+      </div>
+    </div>
+
+    {{ template "footer" }}
+
+    <script>
+      // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+      (function () {
+        "use strict";
+
+        window.addEventListener(
+          "load",
+          function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ
+            var validation = Array.prototype.filter.call(forms, function (
+              form
+            ) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add("was-validated");
+                },
+                false
+              );
+            });
+          },
+          false
+        );
+      })();
+    </script>
+  </body>
+</html>

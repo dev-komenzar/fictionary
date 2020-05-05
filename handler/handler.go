@@ -153,12 +153,12 @@ func Switch1(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -179,12 +179,12 @@ func Switch2(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -206,12 +206,12 @@ func Switch3(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -236,12 +236,12 @@ func GetKaitou(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -257,13 +257,13 @@ func GetAccepted(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -275,9 +275,21 @@ func GetAccepted(c *gin.Context) {
 
 func GetDonation(c *gin.Context) {
 	d := db.GetAllDonation()
+	var a int //カンパ総額
+	for i := range d {
+		a = a + d[i].HowMuch
+	}
+
+	b := a / 100
+
 	c.HTML(200, "donate.html", gin.H{
 		"donation": d,
+		"total":    a,
 	})
+}
+
+func GetMakeDonation(c *gin.Context) {
+	c.HTML(200, "i_will_donate.html", gin.H{})
 }
 
 //Verufy 合言葉があっているか
@@ -288,12 +300,12 @@ func Verify(c *gin.Context) {
 	m := c.PostForm(n)
 	err := isNill(k)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(k)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -316,12 +328,12 @@ func GetListInAdv(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -350,12 +362,12 @@ func getListVoting(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	game := db.GetGame(id)
@@ -389,12 +401,12 @@ func getListArchive(c *gin.Context) {
 	n := c.Param("id")
 	err := isNill(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(n)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 
 	game := db.GetGame(id)
@@ -462,7 +474,7 @@ func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerF
 				for i := range lines {
 					to := lines[i].TalkID
 					if _, err := bot.PushMessage(to, linebot.NewTextMessage(message)).Do(); err != nil {
-						log.Fatal(err)
+						log.Println(err)
 					}
 				}
 			}
@@ -470,7 +482,7 @@ func CreateGame(bot *linebot.Client, twitterClient *twitter.Client) gin.HandlerF
 				// Send a Tweet
 				_, _, err := twitterClient.Statuses.Update(message, nil)
 				if err != nil {
-					log.Fatal(err)
+					log.Println(err)
 				}
 			}
 		}
@@ -485,7 +497,7 @@ func CreateLine(bot *linebot.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		events, err := bot.ParseRequest(c.Request)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		}
 		fmt.Println(events) //jsonを確認したい
 		for _, event := range events {
@@ -524,12 +536,12 @@ func CreateKaitou(c *gin.Context) {
 	a := c.Param("id")
 	err := isNill(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 		return
 	}
@@ -554,7 +566,7 @@ func CreateVote(c *gin.Context) {
 	a := c.Param("id")
 	err := isNill(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 
@@ -562,20 +574,20 @@ func CreateVote(c *gin.Context) {
 
 	l, err := strconv.Atoi(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 
 	b := c.PostForm("slct")
 	err = isNill(b)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 
 	d, err := strconv.Atoi(b)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	g := db.GetKaitou(d)
@@ -604,13 +616,29 @@ func CreateVote(c *gin.Context) {
 
 }
 
+func CreateDonation(c *gin.Context) {
+	a := c.PostForm("donater-name")
+	b := c.PostForm("donation-amount")
+	d := c.PostForm("how-to-pay")
+	f, err := strconv.Atoi(b)
+	if err != nil {
+		log.Println(err)
+		c.Redirect(302, linkToError)
+	}
+
+	e := data.Donation{Who: a, HowMuch: f, HowToPay: d}
+	db.InsertDonation(e)
+
+	c.Redirect(302, "/donate")
+}
+
 //UpdatePhaseToPlaying は Game の Phase を playing に変更する
 func UpdatePhaseToPlaying(c *gin.Context) {
 	//id を取得
 	k := c.Param("id")
 	err := isNill(k)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 
@@ -618,7 +646,7 @@ func UpdatePhaseToPlaying(c *gin.Context) {
 
 	l, err := strconv.Atoi(k)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 
@@ -640,12 +668,12 @@ func UpdatePhaseToArchive(c *gin.Context) {
 	a := c.Param("id")
 	err := isNill(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 	id, err := strconv.Atoi(a)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 		c.Redirect(302, linkToError)
 	}
 

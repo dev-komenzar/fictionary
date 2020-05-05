@@ -7,35 +7,42 @@
       <!--　▼ ジャンボトロン　 -->
       <div class="jumbotron jumbotron-fluid" style="height: 500px; background: url(/resources/pisit-heng-FQvadXmA524-unsplash.jpg) center no-repeat; background-size: cover;">
         <div class="container" style="width: 90%;">
+          <div class="row justify-content-md-center">
+            <div class="col-md-6">
           <div
-            class="card mx-auto my-5 border-0"
-            style="width: 25rem;"
+            class="card mx-auto mt-3 border-0"
           >
             <div class="card-header">カンパ募集中！！</div>
             <div class="card-body text-center">
               <h1 class="card-title">目標10,000円</h1>
               <p class="card-text">
-                広辞苑を買うためにカンパお願いします！現在熊野寮たほいや部では第三版の広辞苑を使用しています。古い辞書のため、現代には合わない部分が出てきており不便しています。ぜひカンパを！
+                広辞苑を買うためにカンパお願いします！現在熊野寮たほいや部では第三版の広辞苑（1991年発行）を使用しています。古い辞書のため、2020年には合わない部分が出てきており不便しています。ぜひカンパを！
               </p>
-              <p><small>なお、目標金額を達成してから個別に回収に当たります。</small></p>
+              <p><small>なお、目標金額を達成してから個別に回収にうかがいます。</small></p>
             </div>
             <div class="card-footer"></div>
           </div>
+        </div>
+      </div>
         </div>
       </div>
       <!--　▲ ジャンボトロン　 -->
 
       <div class="container text-center">
         <div class="card my-3">
+          <div class="card-title"><small>現在のカンパ額</small>
+          <h1 class="h1">¥ {{ .total }}</h1> 
+          </div>
           <div class="card-body">
             <p class="card-text">
               {{ if .donation }} {{ range .donation }}
               <div class="row">
-                  <div class="col">{{ .name }}</div>
-                  <div class="col">{{ .amount }}</div>
+                  <div class="col text-right">{{ .Who }}</div>
+                  <div class="col text-left">{{ .HowMuch }}</div>
               </div>
               {{ end }} {{ else }} まだ寄付した人はいません {{ end }}
             </p>
+            <a href="/i-will-donate" class="btn btn-primary">私もカンパするよ</a>
           </div>
         </div>
 
