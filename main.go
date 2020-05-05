@@ -58,6 +58,9 @@ func main() {
 	// エラーページ
 	router.GET("/error", handler.Error)
 
+	//Donation Page
+	router.GET("/donate", handler.GetDonation)
+
 	//起動
 	router.Run()
 }
