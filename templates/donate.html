@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja" class="h-100">
+  {{ template "head" }}
+  <body class="d-flex flex-column h-100">
+    {{ template "header" }}
+    <div>
+      <!--　▼ ジャンボトロン　 -->
+      <div class="jumbotron jumbotron-fluid" style="height: 500px; background: url(/resources/pisit-heng-FQvadXmA524-unsplash.jpg) center no-repeat; background-size: cover;">
+        <div class="container" style="width: 90%;">
+          <div
+            class="card mx-auto my-5 border-0"
+            style="width: 25rem;"
+          >
+            <div class="card-header">カンパ募集中！！</div>
+            <div class="card-body text-center">
+              <h1 class="card-title">目標10,000円</h1>
+              <p class="card-text">
+                広辞苑を買うためにカンパお願いします！現在熊野寮たほいや部では第三版の広辞苑を使用しています。古い辞書のため、現代には合わない部分が出てきており不便しています。ぜひカンパを！
+              </p>
+              <p><small>なお、目標金額を達成してから個別に回収に当たります。</small></p>
+            </div>
+            <div class="card-footer"></div>
+          </div>
+        </div>
+      </div>
+      <!--　▲ ジャンボトロン　 -->
+
+      <div class="container text-center">
+        <div class="card my-3">
+          <div class="card-body">
+            <p class="card-text">
+              {{ if .donation }} {{ range .donation }}
+              <div class="row">
+                  <div class="col">{{ .name }}</div>
+                  <div class="col">{{ .amount }}</div>
+              </div>
+              {{ end }} {{ else }} まだ寄付した人はいません {{ end }}
+            </p>
+          </div>
+        </div>
+
+        <div class="card-columns">
+            <div class="card">
+                <img src="resources/qr_paypay.png" alt="QR Code for PayPay" class="card-img-top" width="100%" role="img" aria-label="QR code image">
+                <div class="card-body">
+                    <h3 class="card-title"><a href="https://qr.paypay.ne.jp/uGwSCU36j5Clm9Y8">PayPay</a></h3>
+                    <p class="card-text"></p>
+                    <p class="card-text"></p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="resources/qr_pring.png" alt="QR Code for pring" class="card-img-top" width="100%" role="img" aria-label="QR code image">
+                <div class="card-body">
+                    <h3 class="card-title">pring</h3>
+                    <p class="card-text">pring ID: takuya-kometan</p>
+                    <p class="card-text"></p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">連絡先</h2>
+                    <p class="card-text">
+                        <p>メールアドレス：takuya.kometan at gmail.com</p>
+                      <p><a href="https://qr.paypay.ne.jp/uGwSCU36j5Clm9Y8">PayPay</a></p>
+                      <p>LINE Pay: LINE名　こめたに</p>
+                      <p>現金もOK</p>
+                    </p>
+                  </div>
+            </div>
+        </div>
+      </div>
+    </div>
+
+    {{ template "footer" }}
+
+    <script>
+      // 無効なフィールドがある場合にフォーム送信を無効にするスターターJavaScriptの例
+      (function () {
+        "use strict";
+
+        window.addEventListener(
+          "load",
+          function () {
+            // カスタムブートストラップ検証スタイルを適用するすべてのフォームを取得
+            var forms = document.getElementsByClassName("needs-validation");
+            // ループして帰順を防ぐ
+            var validation = Array.prototype.filter.call(forms, function (
+              form
+            ) {
+              form.addEventListener(
+                "submit",
+                function (event) {
+                  if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }
+                  form.classList.add("was-validated");
+                },
+                false
+              );
+            });
+          },
+          false
+        );
+      })();
+    </script>
+  </body>
+</html>
