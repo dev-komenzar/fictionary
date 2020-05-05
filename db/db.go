@@ -43,7 +43,7 @@ func Init() {
 	if err != nil {
 		panic(err)
 	}
-	db.AutoMigrate(&data.Kaitou{}, &data.Game{}, &data.Line{}, &data.Vote{})
+	db.AutoMigrate(&data.Kaitou{}, &data.Game{}, &data.Line{}, &data.Vote{}, &data.Donation{})
 	defer db.Close()
 }
 
@@ -51,7 +51,7 @@ func GetAllLines() []data.Line {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetAllLines)")
 	}
 	defer db.Close()
 
@@ -65,7 +65,7 @@ func GetGame(id int) data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetGame)")
 	}
 	defer db.Close()
 
@@ -79,7 +79,7 @@ func GetKaitou(id int) data.Kaitou {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(InsertLine)")
+		panic("データベース開ず(sb.GetKaitou)")
 	}
 	defer db.Close()
 
@@ -93,7 +93,7 @@ func GetKaitous(g data.Game) []data.Kaitou {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetKaitous)")
 	}
 	defer db.Close()
 
@@ -108,7 +108,7 @@ func GetGames() []data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetGames)")
 	}
 	defer db.Close()
 
@@ -121,7 +121,7 @@ func GetGamesPhaseIs(st string) []data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetGamesPhaseIs)")
 	}
 	defer db.Close()
 
@@ -135,7 +135,7 @@ func GetVotes(b data.Kaitou) []data.Vote {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.GetVotes)")
 	}
 	defer db.Close()
 
@@ -144,12 +144,23 @@ func GetVotes(b data.Kaitou) []data.Vote {
 	return votes
 }
 
+func GetDonation() []data.Donation {
+	connect := argInit()
+	db, err := gorm.Open("postgres", connect)
+	if err != nil {
+		panic("データベース開ず(db.GetDonation)")
+	}
+	defer db.Close()
+
+	var ds []data.
+}
+
 //InsertKaitou : DBに新しいkaitouを追加
 func InsertKaitou(g data.Game, k data.Kaitou) {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.InsertKaitou)")
 	}
 	defer db.Close()
 
@@ -161,7 +172,7 @@ func InsertGame(g data.Game) data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.InserGame)")
 	}
 	defer db.Close()
 
@@ -176,7 +187,7 @@ func UpdateKaitous(ks []data.Kaitou) {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.UpdateKaitous)")
 	}
 	defer db.Close()
 
@@ -197,7 +208,7 @@ func UpdateGame(g data.Game) data.Game {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(dbInsert)")
+		panic("データベース開ず(db.UpdateGame)")
 	}
 	defer db.Close()
 
@@ -223,7 +234,7 @@ func DeleteLine(line data.Line) {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(InsertLine)")
+		panic("データベース開ず(db.DeleteLine)")
 	}
 	defer db.Close()
 
@@ -236,7 +247,7 @@ func VoteTo(k data.Kaitou, v data.Vote) {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
-		panic("データベース開ず(InsertLine)")
+		panic("データベース開ず(db.VoteTo)")
 	}
 	defer db.Close()
 
