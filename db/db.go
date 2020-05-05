@@ -144,7 +144,7 @@ func GetVotes(b data.Kaitou) []data.Vote {
 	return votes
 }
 
-func GetDonation() []data.Donation {
+func GetAllDonation() []data.Donation {
 	connect := argInit()
 	db, err := gorm.Open("postgres", connect)
 	if err != nil {
@@ -152,7 +152,9 @@ func GetDonation() []data.Donation {
 	}
 	defer db.Close()
 
-	var ds []data.
+	var d []data.Donation
+	db.Find(&d)
+	return d
 }
 
 //InsertKaitou : DBに新しいkaitouを追加
