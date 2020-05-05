@@ -38,3 +38,10 @@ type Vote struct {
 	KaitouID  int
 	CreatedBy string
 }
+
+type Donation struct {
+	gorm.Model
+	Who      string
+	HowMuch  int
+	HowToPay string
+}
