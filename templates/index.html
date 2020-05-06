@@ -5,7 +5,14 @@
     {{ template "header" }}
     <div>
       <!--　▼ ジャンボトロン　 -->
-      <div class="jumbotron jumbotron-fluid" style="height: 500px; background: url(/resources/index2-resized.jpeg) center no-repeat; background-size: cover;">
+      <div
+        class="jumbotron jumbotron-fluid"
+        style="
+          height: 500px;
+          background: url(/resources/index2-resized.jpeg) center no-repeat;
+          background-size: cover;
+        "
+      >
         <div class="container" style="width: 90%;">
           <div
             class="card bg-transparent mx-auto my-5 border-0"
@@ -39,8 +46,12 @@
 
             {{ if .accepting }} {{ range .accepting }}
             <p class="card-text">
-              <a href="/games/{{ .ID }}/new">「{{ .Odai }}」 </a>
               <span class="badge badge-pill badge-primary">{{ .CountK }}</span>
+              <a href="/games/{{ .ID }}/new">「{{ .Odai }}」 </a>
+
+              by {{.CreatedBy }}
+            </p>
+            <p class="card-text">
               <a
                 href="#"
                 data-toggle="modal"
