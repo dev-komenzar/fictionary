@@ -173,6 +173,32 @@ func Switch1(c *gin.Context) {
 	}
 }
 
+//SwitchCreateKaitou 新しい回答を書けるか判定
+func SwitchCreateKaitou(c *gin.Context) {
+	//idをint型に変換
+	n := c.Param("id")
+	err := isNill(n)
+	if err != nil {
+		log.Println(err)
+		c.Redirect(302, linkToError)
+	}
+	id, err := strconv.Atoi(n)
+	if err != nil {
+		log.Println(err)
+		c.Redirect(302, linkToError)
+		return
+	}
+
+	game := db.GetGame(id)
+
+	switch game.Phase {
+	case accepting:
+		CreateKaitou(c)
+	default:
+		c.Redirect(302, linkToError)
+	}
+}
+
 //Switch2 「みんなの回答」ページを見れるか判定
 func Switch2(c *gin.Context) {
 	//idをint型に変換

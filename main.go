@@ -29,7 +29,7 @@ func main() {
 
 	router.GET("/games/:id/new", handler.Switch1)
 
-	router.POST("/games/:id/new", handler.CreateKaitou)
+	router.POST("/games/:id/new", handler.SwitchCreateKaitou)
 
 	//「回答受け付けました」ページを表示
 	router.GET("/games/:id/accepted", handler.GetAccepted)
