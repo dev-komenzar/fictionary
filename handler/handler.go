@@ -55,11 +55,11 @@ func isNill(id string) error {
 }
 
 func shuffle(a []data.Kaitou) {
-	//[0,1,2,...,k-1]を用意
+	//[1,2,3,...,k]を用意
 	k := len(a)
 	arr := make([]int, k)
 	for i := 0; i < k; i++ {
-		arr[i] = i
+		arr[i] = i + 1
 	}
 
 	//Fisher–Yates シャッフル

@@ -14,17 +14,17 @@
       </div>
 
 
-      {{range $i, $a := .kaitous}}
+      {{range $a := .kaitous}}
       <div class="mt-3 mb-3">
         <div class="row my-1">
-          <a class="btn btn-default">{{$i}}番</a>
+          <a class="btn btn-default">{{ .Base }}番</a>
           <button
             class="btn btn-primary"
             type="button"
             data-toggle="collapse"
-            data-target="#multiCollapseExample2{{$i}}"
+            data-target="#multiCollapseExample2{{ .Base }}"
             aria-expanded="false"
-            aria-controls="multiCollapseExample2{{$i}}"
+            aria-controls="multiCollapseExample2{{ .Base }}"
           >
             答え
           </button>
@@ -33,7 +33,7 @@
           <div class="col-md-8">
             <div
               class="collapse multi-collapse col-xs-10"
-              id="multiCollapseExample2{{$i}}"
+              id="multiCollapseExample2{{ .Base }}"
             >
               <div class="card card-body">
                 {{ .Answer }}
@@ -83,8 +83,8 @@
         <div class="input-group col-md-5">
           <select class="custom-select" id="slct" name="slct" required>
             <option value="" selected>本当の答えは？</option>
-            {{range $i, $a := .kaitous}}
-            <option value="{{.ID}}">{{$i}}番</option>
+            {{range $a := .kaitous}}
+            <option value="{{.ID}}">{{ .Base }}番</option>
             {{end}}
           </select>
           <div class="invalid-feedback">投票する番号を選択してください</div>
