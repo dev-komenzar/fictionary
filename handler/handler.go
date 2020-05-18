@@ -135,15 +135,15 @@ func Index(c *gin.Context) {
 		l[i].CountK = len(k)
 	}
 
-	//CreatedAt で並び替える
+	//UpdatedAt で並び替える
 	sort.SliceStable(acpGames, func(i, j int) bool {
-		return acpGames[i].CreatedAt.After(acpGames[j].CreatedAt)
+		return acpGames[i].UpdatedAt.After(acpGames[j].UpdatedAt)
 	})
 	sort.SliceStable(plyGames, func(i, j int) bool {
-		return plyGames[i].CreatedAt.After(plyGames[j].CreatedAt)
+		return plyGames[i].UpdatedAt.After(plyGames[j].UpdatedAt)
 	})
 	sort.SliceStable(arcGames, func(i, j int) bool {
-		return arcGames[i].CreatedAt.After(arcGames[j].CreatedAt)
+		return arcGames[i].UpdatedAt.After(arcGames[j].UpdatedAt)
 	})
 
 	c.HTML(200, "index.html", gin.H{
