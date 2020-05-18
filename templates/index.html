@@ -134,7 +134,9 @@
             <h2 class="card-title">これまでのお題</h2>
             <p class="card-text">
               {{ range .archive}}
-              <a href="/games/{{.ID}}">「{{.Odai}}」</a><br />
+              <div class="my-1">
+                <a href="/games/{{.ID}}">「{{.Odai}}」</a>
+              </div>
               {{ end }}
             </p>
           </div>
